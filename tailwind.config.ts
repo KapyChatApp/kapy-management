@@ -46,6 +46,12 @@ module.exports = {
         },
         "accent-red": "#EA4335",
         "accent-blue": "#4285F4",
+        "accent-green": "#34C759",
+        "status-user": "#895803",
+        "status-file": "#0020AC",
+        "status-link": "#2684FC",
+        "status-text": "#FFBA00",
+        "status-image": "#5C00AC",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

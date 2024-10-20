@@ -8,8 +8,8 @@ interface globalSearchProps {
 
 const GlobalSearch = ({ onChange }: globalSearchProps) => {
   return (
-    <div className="relative w-full mt-[16px] px-2">
-      <div className="background-light800_dark200-search relative flex min-h-[36px] grow items-center gap-[12px] rounded-[10px] px-[16px] py-[8px]">
+    <div className="relative w-full">
+      <div className="bg-light-800 dark:bg-dark-400 bg-opacity-50 dark:bg-opacity-50 relative flex min-h-[36px] grow items-center gap-[12px] rounded-[10px] px-[16px] py-[8px]">
         <Icon
           icon="ic:baseline-search"
           width={18}

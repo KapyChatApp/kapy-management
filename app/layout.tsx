@@ -4,6 +4,7 @@ import { Lexend } from "next/font/google";
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
+import Sidebar from "@/components/shared/sidebar/Sidebar";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -12,8 +13,8 @@ const lexend = Lexend({
 });
 
 export const metadata: Metadata = {
-  title: "Kapy ChatApp",
-  description: "Kapy ChatApp",
+  title: "Kapy Management",
+  description: "Kapy Management",
   icons: {
     icon: "/assets/images/icon.png"
   }

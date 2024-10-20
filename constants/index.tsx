@@ -1,9 +1,13 @@
 import { SidebarLink } from "@/types";
 
 export const themes = [
-  { value: "light", label: "Light", icon: "mingcute:sun-fill" },
-  { value: "dark", label: "Dark", icon: "tabler:moon-filled" },
-  { value: "system", label: "System", icon: "material-symbols:computer" }
+  { value: "light", label: "Light", icon: "clarity:sun-line" },
+  { value: "dark", label: "Dark", icon: "carbon:moon" },
+  {
+    value: "system",
+    label: "System",
+    icon: "material-symbols:computer-outline"
+  }
 ];
 
 export const sidebarLinks: SidebarLink[] = [

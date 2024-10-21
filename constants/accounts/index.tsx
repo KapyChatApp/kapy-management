@@ -1,4 +1,5 @@
-import { AccountData, SelectionItem } from "@/types/accounts";
+import { SelectionItem } from "@/types";
+import { AccountData } from "@/types/accounts";
 
 export const selectionItem: SelectionItem[] = [
   {

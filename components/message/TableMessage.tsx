@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import ConfirmModal from "../shared/ConfirmModal";
 import {
   Table,
   TableBody,
@@ -11,15 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
-import {
-  accountDataList,
-  SortableKeys,
-  titleTableHead
-} from "@/constants/accounts";
 import { TableUI } from "@/types";
-import ConfirmModal from "../shared/ConfirmModal";
+import {
+  messageDataList,
+  SortableMessageKeys,
+  titleTableHeadMessage
+} from "@/constants/messages";
+import { formatTime } from "@/lib/utils";
 
-const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
+const TableMessage: React.FC<TableUI> = ({ table, onPaginationData }) => {
   const {
     indexOfLastItem,
     indexOfFirstItem,
@@ -30,33 +31,29 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
 
   //Sorted
   const [sortConfig, setSortConfig] = useState<{
-    key: SortableKeys;
+    key: SortableMessageKeys;
     direction: "ascending" | "descending";
   }>({
-    key: "account.userId",
+    key: "message.id",
     direction: "ascending"
   });
 
   const getValueByKey = (
-    item: (typeof accountDataList)[0],
-    key: SortableKeys
+    item: (typeof messageDataList)[0],
+    key: SortableMessageKeys
   ) => {
     switch (key) {
-      case "account.userId":
-        return item.account.userId;
-      case "account.userName":
-        return item.account.userName;
-      case "account.createdAt":
-        return item.account.createdAt;
-      case "account.email":
-        return item.account.email;
-      case "account.phone":
-        return item.account.phone;
+      case "message.id":
+        return item.message.id;
+      case "message.userName":
+        return item.message.userName;
+      case "message.createdAt":
+        return item.message.createdAt;
       default:
         return "";
     }
   };
-  const sortedData = [...accountDataList].sort((a, b) => {
+  const sortedData = [...messageDataList].sort((a, b) => {
     const aValue = getValueByKey(a, sortConfig.key);
     const bValue = getValueByKey(b, sortConfig.key);
 
@@ -65,7 +62,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
 
     // Kiểm tra nếu key là account.userId và giá trị là string, chuyển nó thành số
     if (
-      sortConfig.key === "account.userId" &&
+      sortConfig.key === "message.id" &&
       typeof aValue === "string" &&
       typeof bValue === "string"
     ) {
@@ -87,7 +84,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
     }
     return 0;
   });
-  const requestSort = (key: SortableKeys) => {
+  const requestSort = (key: SortableMessageKeys) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
@@ -97,10 +94,14 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
 
   //Filter
   const filteredData = sortedData.filter((item) => {
-    if (filterItem === "active") {
-      return item.account.status === true;
-    } else if (filterItem === "inactive") {
-      return item.account.status === false;
+    if (filterItem === "image") {
+      return item.message.content.type === "image";
+    } else if (filterItem === "link") {
+      return item.message.content.type === "link";
+    } else if (filterItem === "file") {
+      return item.message.content.type === "file";
+    } else if (filterItem === "text") {
+      return item.message.content.type === "text";
     }
     return true;
   });
@@ -122,7 +123,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
   };
   const confirmModal = {
     setConfirm,
-    name: "this account",
+    name: "this message",
     action: "remove"
   };
   return (
@@ -130,10 +131,12 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
       <Table key="" className="h-[250px]">
         <TableHeader>
           <TableRow key="header-table-teacher" className="hover:bg-transparent">
-            {titleTableHead.map((item) => (
+            {titleTableHeadMessage.map((item) => (
               <TableHead
                 className={`w-fit text-left ${
-                  item.title === "Status" || item.title === "Action"
+                  item.title === "Category" ||
+                  item.title === "Action" ||
+                  item.title === "Content"
                     ? "cursor-default"
                     : "cursor-pointer"
                 }`}
@@ -142,7 +145,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
                   className="flex flex-row items-center justify-start gap-1 w-fit h-fit"
                   onClick={
                     item.key
-                      ? () => requestSort(item.key as SortableKeys)
+                      ? () => requestSort(item.key as SortableMessageKeys)
                       : undefined
                   }
                 >
@@ -163,52 +166,99 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
         <TableBody>
           {displayedData.map((item) => (
             <TableRow
-              key={item.account.userId}
+              key={item.message.id}
               className="cursor-default hover:bg-transparent"
             >
               <TableCell className="text-left">
                 <div className="flex flex-row items-center justify-start gap-1 w-fit h-fit">
                   <p className="text-dark100_light900 paragraph-regular">
-                    {item.account.userId}
+                    {item.message.id}
                   </p>
                 </div>
               </TableCell>
               <TableCell className="text-left">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.createdAt.toLocaleDateString()}
+                  {formatTime(item.message.createdAt)}
                 </p>
               </TableCell>
               <TableCell className="text-left">
-                <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.userName}
-                </p>
-              </TableCell>
-              <TableCell className="text-left">
-                <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.email}
-                </p>
-              </TableCell>
-              <TableCell className="text-left ">
-                <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.phone}
-                </p>
+                <div className="flex max-w-[170px]">
+                  <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                    {item.message.userName}
+                  </p>
+                </div>
               </TableCell>
               <TableCell className="text-left">
                 {(() => {
-                  switch (item.account.status) {
-                    case true:
+                  switch (item.message.content.type) {
+                    case "image":
                       return (
-                        <div className="flex bg-accent-green bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
-                          <p className="text-accent-green paragraph-15-regular">
-                            Active
+                        <div className="flex max-w-[250px]">
+                          <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                            {item.message.content.altText}
+                          </p>
+                        </div>
+                      );
+                    case "link":
+                      return (
+                        <div className="flex max-w-[250px]">
+                          <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                            {item.message.content.title}
+                          </p>
+                        </div>
+                      );
+                    case "file":
+                      return (
+                        <div className="flex max-w-[250px] ">
+                          <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                            {item.message.content.fileName}
                           </p>
                         </div>
                       );
                     default:
                       return (
-                        <div className="flex bg-accent-red bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
-                          <p className="text-accent-red paragraph-15-regular">
-                            Inactive
+                        <div className="flex max-w-[250px]">
+                          <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                            {item.message.content.content}
+                          </p>
+                        </div>
+                      );
+                  }
+                })()}
+              </TableCell>
+
+              <TableCell className="text-left">
+                {(() => {
+                  switch (item.message.content.type) {
+                    case "image":
+                      return (
+                        <div className="bg-status-image bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-image paragraph-15-regular">
+                            Image
+                          </p>
+                        </div>
+                      );
+                    case "link":
+                      return (
+                        <div className="bg-status-link bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-link paragraph-15-regular">
+                            Link
+                          </p>
+                        </div>
+                      );
+                    case "file":
+                      return (
+                        <div className="bg-status-file bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-file paragraph-15-regular">
+                            File
+                          </p>
+                        </div>
+                      );
+                    default:
+                      return (
+                        <div className="bg-status-text bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-text paragraph-15-regular">
+                            Text
                           </p>
                         </div>
                       );
@@ -217,7 +267,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
               </TableCell>
               <TableCell className="text-left">
                 <div className="flex items-center justify-start gap-4">
-                  <Link href={`/account/${item.account.userId}`}>
+                  <Link href={`/message/${item.message.id}`}>
                     <div className="flex w-fit h-fit rounded-lg bg-accent-blue p-[8px] bg-opacity-20 hover:bg-accent-blue hover:bg-opacity-20">
                       <Icon
                         icon="ph:eye"
@@ -250,4 +300,4 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
   );
 };
 
-export default TableAccount;
+export default TableMessage;

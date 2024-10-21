@@ -30,7 +30,11 @@ const EditableParagraph = ({ title, initialText, onSave }: any) => {
           />
         ) : (
           <p
-            className="text-dark100_light900 paragraph-15-semibold cursor-pointer"
+            className={`${
+              initialText === "Reported"
+                ? "text-accent-red"
+                : "text-dark100_light900"
+            } paragraph-15-semibold cursor-pointer`}
             onClick={handleEditToggle}
           >
             {text}

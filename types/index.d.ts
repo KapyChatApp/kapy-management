@@ -28,9 +28,22 @@ export interface TableProps {
   itemsPerPage: number;
   inputValue: string;
 }
+export interface TableUI {
+  table: TableProps;
+  onPaginationData: (
+    itemsPerPage: number,
+    totalPages: number,
+    dataLength: number
+  ) => void;
+}
 
 export interface ConfirmModalProps {
   setConfirm: React.Dispatch<React.SetStateAction<boolean>>;
   name: string;
   action: string;
+}
+
+export interface SelectionItem {
+  value: string;
+  label: string;
 }

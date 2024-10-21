@@ -1,8 +1,3 @@
-export interface SelectionItem {
-  value: string;
-  label: string;
-}
-
 export interface PostList {
   id: string;
   title: string;

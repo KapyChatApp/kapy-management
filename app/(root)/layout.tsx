@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         <div className="flex w-full h-fit">
           <Navbar />
         </div>
-        <div className="flex w-full min-h-fit background-light850_dark400 rounded-[12px] p-6">
+        <div className="flex w-full min-h-fit background-light850_dark400 rounded-[12px] p-6 shadow-sm shadow-gray-500">
           {children}
         </div>
       </div>

@@ -11,7 +11,7 @@ const LocalSearch = ({ otherClasses, onChange }: CustomInputProps) => {
   return (
     <div className="relative w-full">
       <div
-        className={`${otherClasses} relative flex min-h-[36px] grow items-center gap-[12px] rounded-[10px] px-[16px] py-[8px]`}
+        className={`${otherClasses} relative flex min-h-[36px] grow items-center gap-[12px] rounded-[20px] px-[16px] py-[8px]`}
       >
         <Icon
           icon="ic:baseline-search"

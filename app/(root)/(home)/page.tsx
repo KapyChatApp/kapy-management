@@ -1,6 +1,6 @@
 import ActivesChart from "@/components/dashboard/chart/ActivesChart";
 import JoinersChart from "@/components/dashboard/chart/JoinersChart";
-import TableReport from "@/components/dashboard/table/TableReport";
+import TableReport from "@/components/dashboard/TableReport";
 import TotalData from "@/components/dashboard/TotalData";
 import { reportDataList } from "@/constants/reports";
 import React from "react";

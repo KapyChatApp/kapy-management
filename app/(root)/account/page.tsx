@@ -54,7 +54,7 @@ const page = () => {
   return (
     <div className="flex flex-col gap-4 w-full">
       <TopPage top={top} />
-      <div className="flex flex-col background-light900_dark200 rounded-[12px] p-4 gap-8">
+      <div className="flex flex-col background-light900_dark200 rounded-[12px] p-4 h-[520px] items-center justify-between">
         <TableAccount table={table} onPaginationData={handlePaginationData} />
 
         <PaginationDisplay page={paginationUI} />

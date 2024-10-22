@@ -1,4 +1,5 @@
-import { ReportData } from "@/types/reports";
+import { SelectionItem } from "@/types";
+import { ReportData, SelectionReportAction } from "@/types/reports";
 
 export const reportDataList: ReportData[] = [
   {
@@ -291,5 +292,82 @@ export const reportDataList: ReportData[] = [
       },
       status: "resolved"
     }
+  }
+];
+
+export const selectionItemReport: SelectionItem[] = [
+  {
+    value: "all",
+    label: "All reports"
+  },
+  {
+    value: "resolved",
+    label: "Resolved"
+  },
+  {
+    value: "rejected",
+    label: "Rejected"
+  },
+  {
+    value: "image",
+    label: "Images"
+  },
+  {
+    value: "link",
+    label: "Links"
+  },
+  {
+    value: "file",
+    label: "Files"
+  },
+  {
+    value: "text",
+    label: "Texts"
+  }
+];
+
+export type SortableReportKeys =
+  | "report.id"
+  | "report.reporterInfo.name"
+  | "report.createdAt"
+  | "report.title";
+
+export const titleTableHeadReport: {
+  title: string;
+  key: SortableReportKeys | null;
+}[] = [
+  { title: "ID", key: "report.id" },
+  { title: "Created At", key: "report.reporterInfo.name" },
+  { title: "Account Name", key: "report.createdAt" },
+  { title: "Title", key: "report.title" },
+  { title: "Targeted Item", key: null },
+  { title: "Status", key: null },
+  { title: "Action", key: null }
+];
+
+export const titleReporter: { title: string }[] = [
+  { title: "Reporter Name:" },
+  { title: "Reporter ID:" },
+  { title: "Status:" }
+];
+
+export const titleReportedPerson: { title: string }[] = [
+  { title: "Reported Person:" },
+  { title: "Reported ID:" },
+  { title: "Status:" }
+];
+
+export const selectionReportAction: SelectionReportAction[] = [
+  {
+    key: "hidden",
+    value: "Hidden"
+  },
+  {
+    key: "unavailable",
+    value: "Unavailable"
+  },
+  {
+    key: "display",
+    value: "Continue displaying"
   }
 ];

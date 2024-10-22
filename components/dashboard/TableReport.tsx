@@ -162,7 +162,7 @@ const TableReport = () => {
                       );
                     default:
                       return (
-                        <div className="flex bg-primary-200 rounded-lg w-[84px] items-center justify-center h-fit p-1">
+                        <div className="flex bg-primary-500 bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
                           <p className="text-primary-500 paragraph-15-regular">
                             Pending
                           </p>

@@ -1,12 +1,12 @@
 export interface ImageContent {
   type: "image";
   url: string;
-  altText?: string;
+  altText: string;
 }
 export interface LinkContent {
   type: "link";
   url: string;
-  title?: string;
+  title: string;
 }
 export interface FileContent {
   type: "file";
@@ -45,4 +45,14 @@ export interface ReportDetail {
 
 export interface ReportData {
   report: ReportDetail;
+}
+
+export interface ReportDetailProps {
+  report: ReportData[];
+  handleSave: any;
+}
+
+export interface SelectionReportAction {
+  key: string;
+  value: string;
 }

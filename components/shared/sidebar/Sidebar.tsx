@@ -35,12 +35,14 @@ const Sidebar = () => {
           {sidebarLinks.map((item) => {
             const isDynamicPath = /^\/\d+$/.test(pathname);
             const isAccountDynamicPath = pathname.startsWith("/account/");
-            const isMessageDynamicPath = pathname.startsWith("/report/");
+            const isMessageDynamicPath = pathname.startsWith("/message/");
+            const isReportDynamicPath = pathname.startsWith("/report/");
             const isActive =
               pathname === item.route ||
               (isDynamicPath && item.route === "/") ||
               (isAccountDynamicPath && item.route === "/account") ||
-              (isMessageDynamicPath && item.route === "/message");
+              (isMessageDynamicPath && item.route === "/message") ||
+              (isReportDynamicPath && item.route === "/report");
             return (
               <Link
                 key={item.route}

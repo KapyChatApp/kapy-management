@@ -127,13 +127,15 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
   };
   return (
     <>
-      <Table key="" className="h-[250px]">
+      <Table key="" className="h-fit">
         <TableHeader>
           <TableRow key="header-table-teacher" className="hover:bg-transparent">
             {titleTableHead.map((item) => (
               <TableHead
                 className={`w-fit text-left ${
-                  item.title === "Status" || item.title === "Action"
+                  item.title === "Status" ||
+                  item.title === "Action" ||
+                  item.title === "Phone"
                     ? "cursor-default"
                     : "cursor-pointer"
                 }`}
@@ -149,12 +151,18 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
                   <p className="text-primary-500 paragraph-regular">
                     {item.title}
                   </p>
-                  <Icon
-                    icon="basil:sort-outline"
-                    width={24}
-                    height={24}
-                    className="text-primary-500"
-                  />
+                  {!(
+                    item.title === "Status" ||
+                    item.title === "Action" ||
+                    item.title === "Phone"
+                  ) && (
+                    <Icon
+                      icon="basil:sort-outline"
+                      width={24}
+                      height={24}
+                      className="text-primary-500"
+                    />
+                  )}
                 </div>
               </TableHead>
             ))}

@@ -21,7 +21,7 @@ const TopPage: React.FC<Top> = ({ top }) => {
       <div className="flex flex-row w-fit h-fit gap-3 items-center justify-center">
         <LocalSearch otherClasses="border border-light-500 bg-transparent" />
         <Select value={filterItem} onValueChange={(value) => setFilter(value)}>
-          <SelectTrigger className={`${otherClasses} h-[36px] rounded-[20px]`}>
+          <SelectTrigger className={`${otherClasses} rounded-[20px]`}>
             <SelectValue placeholder={filterItem} />
           </SelectTrigger>
           <SelectContent>

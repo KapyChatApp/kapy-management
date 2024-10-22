@@ -54,12 +54,12 @@ const PaginationDisplay: React.FC<PaginationUI> = ({ page }) => {
   return (
     <div className="flex flex-row bg-transparent w-full justify-between items-center">
       {totalPages > 0 ? (
-        <div className="flex items-center justify-start text-dark600_light600 body-light">
+        <div className="flex items-center justify-start text-dark100_light900 body-light">
           Show {indexOfFirstItem + 1} to {Math.min(indexOfLastItem, dataLength)}{" "}
           of {dataLength} results
         </div>
       ) : (
-        <div className="flex items-center justify-start text-dark600_light600 body-light">
+        <div className="flex items-center justify-start text-dark100_light900 body-light">
           Show {dataLength} results
         </div>
       )}
@@ -70,12 +70,12 @@ const PaginationDisplay: React.FC<PaginationUI> = ({ page }) => {
               <Button
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="flex w-fit h-fit bg-transparent hover:bg-transparent p-0"
+                className="flex w-fit h-fit bg-transparent hover:bg-transparent p-0 [&_svg]:size-5"
               >
                 <Icon
                   icon="carbon:previous-outline"
-                  width={20}
-                  height={18}
+                  width={24}
+                  height={24}
                   className="text-dark100_light900"
                 />
               </Button>
@@ -85,7 +85,7 @@ const PaginationDisplay: React.FC<PaginationUI> = ({ page }) => {
               if (page === "...") {
                 return (
                   <PaginationItem key={`ellipsis`}>
-                    <span className="text-dark600_light600 body-light">
+                    <span className="text-dark100_light900 body-regular">
                       ...
                     </span>
                   </PaginationItem>
@@ -100,13 +100,15 @@ const PaginationDisplay: React.FC<PaginationUI> = ({ page }) => {
                       }}
                       className={`${
                         currentPage === page
-                          ? "active background-light500_dark300 rounded-full items-center justify-center h-fit w-fit"
-                          : "items-center justify-center h-fit w-fit"
-                      }`}
+                          ? " bg-light-500 dark:bg-dark-300 rounded-full items-center justify-center h-fit w-fit"
+                          : "items-center justify-center h-fit w-fit hover:bg-light-500 hover:dark:bg-dark-300 hover:rounded-full hover:bg-opacity-50"
+                      } hover:bg-light-500 hover:dark:bg-dark-300 hover:rounded-full p-2`}
                     >
-                      <p className="text-dark100_light900 body-light px-[6px] py-0">
-                        {page}
-                      </p>
+                      <div className="flex h-[10px] w-[10px] items-center justify-center">
+                        <p className="text-dark100_light900 body-regular">
+                          {page}
+                        </p>
+                      </div>
                     </PaginationLink>
                   </PaginationItem>
                 );
@@ -117,7 +119,7 @@ const PaginationDisplay: React.FC<PaginationUI> = ({ page }) => {
               <Button
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="flex w-fit h-fit bg-transparent hover:bg-transparent p-0"
+                className="flex w-fit h-fit bg-transparent hover:bg-transparent p-0 [&_svg]:size-5"
               >
                 <Icon
                   icon="carbon:next-outline"

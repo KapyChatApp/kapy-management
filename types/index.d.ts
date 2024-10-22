@@ -53,3 +53,11 @@ export interface CreationItemProps {
   type: string;
   key: string;
 }
+
+export interface Notifications {
+  id: string;
+  title: string;
+  content: string;
+  value: string;
+  isRead: boolean;
+}

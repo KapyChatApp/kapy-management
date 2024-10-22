@@ -1,9 +1,11 @@
+"use client";
 import React from "react";
 import GlobalSearch from "../search/globalSearch";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Theme } from "./Theme";
 import Image from "next/image";
+import Notification from "./Notification";
 
 const Navbar = () => {
   return (
@@ -12,14 +14,16 @@ const Navbar = () => {
         <GlobalSearch />
       </div>
 
-      <Button className="flex w-9 h-9 p-[6px] rounded-full bg-light-800 dark:bg-dark-300 hover:bg-light-300 hover:dark:bg-dark-300">
+      {/* <Button className="flex w-9 h-9 p-[6px] rounded-full bg-light-800 dark:bg-dark-300 hover:bg-light-300 hover:dark:bg-dark-300">
         <Icon
           icon="clarity:notification-line"
           width={24}
           height={24}
           className="text-dark100_light900 bg-transparent"
         />
-      </Button>
+      </Button> */}
+
+      <Notification />
 
       <div className="flex h-fit w-fit">
         <Theme />

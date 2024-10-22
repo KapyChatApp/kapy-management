@@ -1,4 +1,4 @@
-import { CreationItemProps, SidebarLink } from "@/types";
+import { CreationItemProps, Notifications, SidebarLink } from "@/types";
 
 export const themes = [
   { value: "light", label: "Light", icon: "clarity:sun-line" },
@@ -94,5 +94,50 @@ export const creationItem: CreationItemProps[] = [
     title: "Password",
     type: "text",
     key: "password"
+  }
+];
+
+export const notifications: Notifications[] = [
+  {
+    id: "1",
+    title: "Account",
+    content: "Your account has been successfully updated.",
+    value: "account",
+    isRead: false
+  },
+  {
+    id: "2",
+    title: "Report",
+    content: "Your weekly report is ready for review.",
+    value: "report",
+    isRead: true
+  },
+  {
+    id: "3",
+    title: "Message",
+    content: "You have received a new message from John.",
+    value: "message",
+    isRead: false
+  },
+  {
+    id: "4",
+    title: "Account",
+    content: "Password changed successfully.",
+    value: "account",
+    isRead: true
+  },
+  {
+    id: "5",
+    title: "Message",
+    content: "You have received a new message from Alice.",
+    value: "message",
+    isRead: false
+  },
+  {
+    id: "6",
+    title: "Report",
+    content: "Monthly sales report is available.",
+    value: "report",
+    isRead: true
   }
 ];

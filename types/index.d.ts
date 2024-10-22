@@ -47,3 +47,9 @@ export interface SelectionItem {
   value: string;
   label: string;
 }
+
+export interface CreationItemProps {
+  title: string;
+  type: string;
+  key: string;
+}

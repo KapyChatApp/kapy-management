@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Input } from "../ui/input";
 
 const EditableParagraph = ({ title, initialText, onSave }: any) => {
   const [text, setText] = useState(initialText);
@@ -21,12 +22,12 @@ const EditableParagraph = ({ title, initialText, onSave }: any) => {
       <p className="text-dark100_light900 paragraph-15-light">{title}</p>
       <div className="flex flex-row items-center justify-center">
         {isEditing ? (
-          <input
+          <Input
+            className="h-[24px] md:h-[36px] dark:bg-transparent focus:outline-none ring-0 border-light-500"
             type="text"
             value={text}
             onChange={handleChange}
             onBlur={handleEditToggle}
-            className="border rounded-md p-1 w-full"
           />
         ) : (
           <p

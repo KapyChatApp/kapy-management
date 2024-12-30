@@ -1,11 +1,21 @@
+"use client";
 import ActivesChart from "@/components/dashboard/chart/ActivesChart";
 import JoinersChart from "@/components/dashboard/chart/JoinersChart";
 import TableReport from "@/components/dashboard/TableReport";
 import TotalData from "@/components/dashboard/TotalData";
 import { reportDataList } from "@/constants/reports";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 const page = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/signin");
+    }
+  }, []);
   const resolvedCount = reportDataList.filter(
     (item) => item.report.status === "resolved"
   ).length;

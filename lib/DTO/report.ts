@@ -1,3 +1,5 @@
+import { ShortUserResponseDTO } from "./user";
+
 export interface VerifyReportDTO {
   status: string;
 }
@@ -45,8 +47,10 @@ export interface ReportResponseDTO {
   content: string;
   flag: boolean;
   status: string;
-  userId: string;
+  userId: ShortUserResponseDTO;
+  createAt: string;
   target: IPost | IUser;
+  targetType: string;
 }
 
 export interface CreateReportDTO {

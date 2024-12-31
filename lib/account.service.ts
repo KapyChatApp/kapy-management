@@ -1,6 +1,7 @@
 import { PostResponseDTO } from "./DTO/post";
 import { UpdateUserDTO, UserResponseDTO } from "./DTO/user";
 import axios from "axios";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchAllUsers = async (): Promise<UserResponseDTO[]> => {
   try {
@@ -9,15 +10,12 @@ export const fetchAllUsers = async (): Promise<UserResponseDTO[]> => {
       console.log("No token found");
       return [];
     }
-    const response = await axios.get<UserResponseDTO[]>(
-      `${process.env.BASE_URL}user/all`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${storedToken}`
-        }
+    const response = await axios.get<UserResponseDTO[]>(`${BASE_URL}user/all`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${storedToken}`
       }
-    );
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to fetch users:", error);
@@ -39,7 +37,7 @@ export const fetchUserPosts = async (
 
     // Gọi API
     const response = await axios.get<PostResponseDTO[]>(
-      `${process.env.BASE_URL}/post/manage/all?user=${userId}`,
+      `${BASE_URL}post/manage/all?userId=${userId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -61,10 +59,9 @@ export async function getUserProfile(id: string | null) {
     const storedToken = localStorage.getItem("token");
     if (!storedToken) {
       console.log("No token found");
-      return [];
     }
     const response = await fetch(
-      `${process.env.BASE_URL}user/findUserById?userId=${id}`,
+      `${BASE_URL}user/manage/findUserById?userId=${id}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +74,7 @@ export async function getUserProfile(id: string | null) {
       throw new Error("Error fetching users");
     }
 
-    const data = await response.json();
+    const data: UserResponseDTO = await response.json();
     return data;
   } catch (error) {
     console.error("Failed to fetch users:", error);
@@ -93,7 +90,7 @@ export async function getUserFriends(id: string | null) {
       return [];
     }
     const response = await fetch(
-      `${process.env.BASE_URL}friend/manage/friend?userId=${id}`,
+      `${BASE_URL}friend/manage/friend?userId=${id}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -121,15 +118,12 @@ export async function getUserBffs(id: string | null) {
       console.log("No token found");
       return [];
     }
-    const response = await fetch(
-      `${process.env.BASE_URL}friend/manage/bff?userId=${id}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${storedToken}`
-        }
+    const response = await fetch(`${BASE_URL}friend/manage/bff?userId=${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${storedToken}`
       }
-    );
+    });
 
     if (!response.ok) {
       throw new Error("Error fetching bffs");
@@ -151,7 +145,7 @@ export async function updateInfo(params: UpdateUserDTO, userId: string) {
       return [];
     }
     const response = await fetch(
-      `${process.env.BASE_URL}user/update?userId=${userId}`,
+      `${BASE_URL}user/manage/update?userId=${userId}`,
       {
         method: "PATCH",
         headers: {
@@ -173,6 +167,34 @@ export async function updateInfo(params: UpdateUserDTO, userId: string) {
   }
 }
 
+export async function removeUser(userId: string | null) {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      console.log("No token found");
+      return [];
+    }
+    const response = await fetch(
+      `${BASE_URL}/user/manage/remove?userId=${userId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error remove account");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to update status", err);
+  }
+}
+
 export async function deactiveUser(userId: string | null) {
   try {
     const storedToken = localStorage.getItem("token");
@@ -181,7 +203,7 @@ export async function deactiveUser(userId: string | null) {
       return [];
     }
     const response = await fetch(
-      `${process.env.BASE_URL}/user/deactive?userId=${userId}`,
+      `${BASE_URL}/user/manage/deactive?userId=${userId}`,
       {
         method: "DELETE",
         headers: {
@@ -209,7 +231,7 @@ export const deleteRateById = async (pointId: string, userId: string) => {
     }
 
     const response = await axios.delete(
-      `${process.env.BASE_URL}point/manage/delete?userId=${userId}`,
+      `${BASE_URL}point/manage/delete?userId=${userId}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -234,7 +256,7 @@ export const subtractUserPoints = async (userId: string, point: number) => {
     }
 
     const response = await axios.patch(
-      `${process.env.BASE_URL}point/manage/minus?userId=${userId}&point=${point}`,
+      `${BASE_URL}point/manage/minus?userId=${userId}&point=${point}`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -260,7 +282,7 @@ export const addPointsToUser = async (userId: string, point: number) => {
 
     // Gửi query parameters qua URL
     const response = await axios.patch(
-      `${process.env.BASE_URL}point/manage/plus?userId=${userId}&point=${point}`,
+      `${BASE_URL}point/manage/plus?userId=${userId}&point=${point}`,
       null,
       {
         headers: {

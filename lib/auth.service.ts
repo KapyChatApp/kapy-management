@@ -1,12 +1,10 @@
 import { UserLoginDTO, UserRegisterDTO } from "./DTO/user";
 import axios from "axios";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const registerAdmin = async (user: UserRegisterDTO) => {
   try {
-    const response = await axios.post(
-      `${process.env.BASE_URL}user/create-admin`,
-      user
-    );
+    const response = await axios.post(`${BASE_URL}user/create-admin`, user);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -22,7 +20,7 @@ export async function checkTokenFrontend(
   token: string
 ): Promise<{ isAuthenticated: boolean }> {
   try {
-    const response = await fetch(`${process.env.BASE_URL}auth/check-token`, {
+    const response = await fetch(`${BASE_URL}auth/check-token`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -51,7 +49,7 @@ export const loginUser = async (
   flag: boolean;
 }> => {
   try {
-    const response = await fetch(`${process.env.BASE_URL}auth/manage/login`, {
+    const response = await fetch(`${BASE_URL}auth/manage/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -68,7 +66,12 @@ export const loginUser = async (
     const token = data.token;
     localStorage.setItem("token", token);
 
-    return { message: data.message, token: token, roles: [], flag: false };
+    return {
+      message: data.message,
+      token: token,
+      roles: data.roles,
+      flag: false
+    };
   } catch (error) {
     console.error("Error registering user:", error);
     return { message: "Login failed", token: "", roles: [], flag: false };

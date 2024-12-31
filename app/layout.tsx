@@ -33,7 +33,10 @@ export default function RootLayout({
           rel="stylesheet"
         ></link>
       </head>
-      <body className="font-helvetica overflow-scroll custom-scrollbar">
+      <body
+        cz-shortcut-listen="true"
+        className="font-helvetica overflow-scroll custom-scrollbar"
+      >
         <ThemeProvider>{children}</ThemeProvider>
         <Toaster />
       </body>

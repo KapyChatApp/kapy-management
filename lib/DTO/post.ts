@@ -12,13 +12,13 @@ export interface FileResponseDTO {
 }
 
 export interface CommentResponseDTO {
-  _id: Schema.Types.ObjectId;
+  _id: string;
   firstName: string;
   lastName: string;
   nickName: string;
   avatar: string;
-  userId: Schema.Types.ObjectId;
-  likedIds: Schema.Types.ObjectId[];
+  userId: string;
+  likedIds: string[];
   replieds: CommentResponseDTO[];
   caption: string;
   createAt: string;
@@ -27,22 +27,23 @@ export interface CommentResponseDTO {
 }
 
 export interface CreatePostDTO {
-  userId: Schema.Types.ObjectId | undefined;
+  userId: string | undefined;
   caption: string;
-  contentIds: Schema.Types.ObjectId[];
+  contentIds: string[];
 }
 
 export interface PostResponseDTO {
-  _id: Schema.Types.ObjectId;
+  _id: string;
   firstName: string;
   lastName: string;
   nickName: string;
   avatar: string;
-  userId: Schema.Types.ObjectId;
-  likedIds: Schema.Types.ObjectId[];
+  userId: string;
+  likedIds: string[];
   shares: PostResponseDTO[];
   comments: CommentResponseDTO[];
   caption: string;
   createAt: string;
   contents: FileResponseDTO[];
+  flag: boolean;
 }

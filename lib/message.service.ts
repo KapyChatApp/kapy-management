@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ResponseMessageDTO } from "./DTO/message";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchAllMessages = async (): Promise<ResponseMessageDTO[]> => {
   try {
@@ -10,7 +11,7 @@ export const fetchAllMessages = async (): Promise<ResponseMessageDTO[]> => {
     }
 
     const response = await axios.get<ResponseMessageDTO[]>(
-      `${process.env.BASE_URL}message/manage/list`,
+      `${BASE_URL}message/manage/list`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -32,18 +33,15 @@ export const removeMessageById = async (messageId: string) => {
       throw new Error("No token found");
     }
 
-    const response = await axios.delete(
-      `${process.env.BASE_URL}message/manage/remove`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${storedToken}`
-        },
-        params: {
-          messageId
-        }
+    const response = await axios.delete(`${BASE_URL}message/manage/remove`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `${storedToken}`
+      },
+      params: {
+        messageId
       }
-    );
+    });
 
     if (response.status === 200) {
       console.log("Message removed successfully");
@@ -67,7 +65,7 @@ export const updateMessageContent = async (
     }
 
     const response = await axios.put<ResponseMessageDTO>(
-      `${process.env.BASE_URL}message/manage/update`,
+      `${BASE_URL}message/manage/update`,
       { messageId, newContent },
       {
         headers: {

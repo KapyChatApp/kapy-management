@@ -20,19 +20,19 @@ const Signin = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const userData = { phoneNumber, password };
-
     try {
+      const userData = { phoneNumber, password };
+      console.log(userData, "check");
       const user = await loginUser(userData);
-
+      console.log(user);
       if (user) {
-        const userRoles = user.roles || [];
+        const userRoles = user.roles;
         if (userRoles.includes("admin")) {
           localStorage.setItem("token", user.token);
           const decodedToken = JSON.parse(atob(user.token.split(".")[1]));
           const userId = decodedToken?.id;
           localStorage.setItem("userId", userId);
-          router.push("/");
+          window.location.href = "/";
         } else {
           setErrorMessage("You do not have access!");
         }

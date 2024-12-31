@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ReportResponseDTO, VerifyReportDTO } from "./DTO/report";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 export const fetchAllReports = async (): Promise<ReportResponseDTO[]> => {
   try {
@@ -9,7 +10,7 @@ export const fetchAllReports = async (): Promise<ReportResponseDTO[]> => {
     }
 
     const response = await axios.get<ReportResponseDTO[]>(
-      `${process.env.BASE_URL}report/all`,
+      `${BASE_URL}report/all`,
       {
         headers: {
           "Content-Type": "application/json",
@@ -18,6 +19,7 @@ export const fetchAllReports = async (): Promise<ReportResponseDTO[]> => {
       }
     );
 
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching reports:", error);
@@ -49,6 +51,30 @@ export const verifyReportAPI = async (
     return response.data;
   } catch (error) {
     console.error("Error verifying report:", error);
+    throw error;
+  }
+};
+
+export const removeReport = async (reportId: string) => {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      throw new Error("No token found");
+    }
+
+    const response = await axios.delete(
+      `${BASE_URL}report/manage/remove?reportId=${reportId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting report:", error);
     throw error;
   }
 };

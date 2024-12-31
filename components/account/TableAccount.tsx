@@ -16,10 +16,30 @@ import {
   SortableKeys,
   titleTableHead
 } from "@/constants/accounts";
-import { TableUI } from "@/types";
 import ConfirmModal from "../shared/ConfirmModal";
+import { UserResponseDTO } from "@/lib/DTO/user";
+import { fetchAllUsers, removeUser } from "@/lib/account.service";
+import useSearchAccount from "@/hooks/use-search-account";
+import { TableProps } from "@/types";
+import Confirm, { ConfirmModalProps } from "../shared/sidebar/Confirm";
 
-const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
+interface TableUIAccount {
+  table: TableProps;
+  onPaginationData: (
+    itemsPerPage: number,
+    totalPages: number,
+    dataLength: number
+  ) => void;
+  list: UserResponseDTO[];
+  setData: React.Dispatch<React.SetStateAction<UserResponseDTO[]>>;
+}
+
+const TableAccount: React.FC<TableUIAccount> = ({
+  table,
+  onPaginationData,
+  list,
+  setData
+}) => {
   const {
     indexOfLastItem,
     indexOfFirstItem,
@@ -37,26 +57,23 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
     direction: "ascending"
   });
 
-  const getValueByKey = (
-    item: (typeof accountDataList)[0],
-    key: SortableKeys
-  ) => {
+  const getValueByKey = (item: (typeof list)[0], key: SortableKeys) => {
     switch (key) {
       case "account.userId":
-        return item.account.userId;
+        return item._id;
       case "account.userName":
-        return item.account.userName;
+        return item.firstName + " " + item.lastName;
       case "account.createdAt":
-        return item.account.createdAt;
+        return item.createAt;
       case "account.email":
-        return item.account.email;
+        return item.email;
       case "account.phone":
-        return item.account.phone;
+        return item.phoneNumber;
       default:
         return "";
     }
   };
-  const sortedData = [...accountDataList].sort((a, b) => {
+  const sortedData = [...list].sort((a, b) => {
     const aValue = getValueByKey(a, sortConfig.key);
     const bValue = getValueByKey(b, sortConfig.key);
 
@@ -71,12 +88,6 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
     ) {
       aParsedValue = parseInt(aValue, 10);
       bParsedValue = parseInt(bValue, 10);
-    }
-
-    // Kiểm tra nếu giá trị là Date, chuyển nó thành số bằng getTime()
-    if (aValue instanceof Date && bValue instanceof Date) {
-      aParsedValue = aValue.getTime();
-      bParsedValue = bValue.getTime();
     }
 
     if (aParsedValue < bParsedValue) {
@@ -98,9 +109,9 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
   //Filter
   const filteredData = sortedData.filter((item) => {
     if (filterItem === "active") {
-      return item.account.status === true;
+      return item.flag === true;
     } else if (filterItem === "inactive") {
-      return item.account.status === false;
+      return item.flag === false;
     }
     return true;
   });
@@ -116,15 +127,34 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
   }, [itemsPerPage, totalPages, dataLength, onPaginationData]);
 
   //Modal Confirm
-  const [confirm, setConfirm] = useState(false);
-  const handleRemove = () => {
-    setConfirm(!confirm);
+  const [isConfirm, setIsConfirm] = useState(false);
+  const [confirm, setConfirm] = useState<ConfirmModalProps>({
+    setConfirm: () => {},
+    handleAction: () => {},
+    name: "",
+    action: ""
+  });
+  const handleRemove = async (userId: string) => {
+    try {
+      const result = await removeUser(userId);
+      if (result) setData((item) => item.filter((user) => user._id != userId));
+      alert("Report deleted successfully!");
+      console.log(result);
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      alert("Failed to delete report.");
+    }
   };
-  const confirmModal = {
-    setConfirm,
-    name: "this account",
-    action: "remove"
+  const handleConfirmRemove = (reportId: string) => {
+    setIsConfirm(true);
+    setConfirm({
+      setConfirm: setIsConfirm,
+      handleAction: () => handleRemove(reportId),
+      name: " this report",
+      action: "remove"
+    });
   };
+
   return (
     <>
       <Table key="" className="h-fit">
@@ -171,39 +201,39 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
         <TableBody>
           {displayedData.map((item) => (
             <TableRow
-              key={item.account.userId}
+              key={item._id}
               className="cursor-default hover:bg-transparent"
             >
               <TableCell className="text-left">
                 <div className="flex flex-row items-center justify-start gap-1 w-fit h-fit">
                   <p className="text-dark100_light900 paragraph-regular">
-                    {item.account.userId}
+                    {item._id}
                   </p>
                 </div>
               </TableCell>
               <TableCell className="text-left">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.createdAt.toLocaleDateString()}
+                  {new Date(item.createAt).toLocaleDateString()}
                 </p>
               </TableCell>
               <TableCell className="text-left">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.userName}
+                  {item.firstName + " " + item.lastName}
                 </p>
               </TableCell>
               <TableCell className="text-left">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.email}
+                  {item.email}
                 </p>
               </TableCell>
               <TableCell className="text-left ">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.account.phone}
+                  {item.phoneNumber}
                 </p>
               </TableCell>
               <TableCell className="text-left">
                 {(() => {
-                  switch (item.account.status) {
+                  switch (item.flag) {
                     case true:
                       return (
                         <div className="flex bg-accent-green bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
@@ -225,7 +255,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
               </TableCell>
               <TableCell className="text-left">
                 <div className="flex items-center justify-start gap-4">
-                  <Link href={`/account/${item.account.userId}`}>
+                  <Link href={`/account/${item._id}`}>
                     <div className="flex w-fit h-fit rounded-lg bg-accent-blue p-[8px] bg-opacity-20 hover:bg-accent-blue hover:bg-opacity-20">
                       <Icon
                         icon="ph:eye"
@@ -237,7 +267,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
                   </Link>
                   <Button
                     className="flex w-fit h-fit rounded-lg bg-accent-red p-[8px] bg-opacity-20 shadow-none border-none hover:bg-accent-red hover:bg-opacity-20"
-                    onClick={handleRemove}
+                    onClick={() => handleConfirmRemove(item._id)}
                   >
                     <Icon
                       icon="gravity-ui:trash-bin"
@@ -253,7 +283,7 @@ const TableAccount: React.FC<TableUI> = ({ table, onPaginationData }) => {
         </TableBody>
       </Table>
 
-      {confirm && <ConfirmModal confirm={confirmModal} />}
+      {isConfirm && <Confirm confirm={confirm} />}
     </>
   );
 };

@@ -14,12 +14,22 @@ interface Top {
   top: TopPageProps;
 }
 const TopPage: React.FC<Top> = ({ top }) => {
-  const { filterItem, setFilter, selectionItem, titlePage, otherClasses } = top;
+  const {
+    filterItem,
+    setFilter,
+    selectionItem,
+    titlePage,
+    otherClasses,
+    setSearchTerm
+  } = top;
   return (
     <div className="flex flex-row items-center justify-between w-full h-fit">
       <p className="text-dark100_light900 h2-semibold">{titlePage}</p>
       <div className="flex flex-row w-fit h-fit gap-3 items-center justify-center">
-        <LocalSearch otherClasses="border border-light-500 bg-transparent" />
+        <LocalSearch
+          otherClasses="border border-light-500 bg-transparent"
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <Select value={filterItem} onValueChange={(value) => setFilter(value)}>
           <SelectTrigger className={`${otherClasses} rounded-[20px]`}>
             <SelectValue placeholder={filterItem} />

@@ -8,8 +8,12 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import LineChartActives from "./LineChartActives";
+import { CountAnalyseResponseDTO } from "@/lib/DTO/analyst";
+interface props {
+  data: CountAnalyseResponseDTO;
+}
 
-const ActivesChart = () => {
+const ActivesChart = ({ data }: props) => {
   const [selectedOption, setSelectedOption] = useState("weekly");
   return (
     <div className="flex flex-col background-light900_dark200 rounded-[12px] p-6 w-full min-h-[406px] gap-4">

@@ -1,3 +1,5 @@
+import { UserResponseDTO } from "@/lib/DTO/user";
+
 export interface PostList {
   id: string;
   title: string;
@@ -34,6 +36,5 @@ export interface AccountData {
 }
 
 export interface AccountDetailProps {
-  account: AccountData[];
-  handleSave: any;
+  account: UserResponseDTO;
 }

@@ -9,6 +9,7 @@ export interface TopPageProps {
   selectionItem: SelectionItem[];
   filterItem: string;
   setFilter: React.Dispatch<React.SetStateAction<string>>;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   otherClasses: string;
 }
 

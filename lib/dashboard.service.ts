@@ -1,6 +1,6 @@
 import axios from "axios";
 import { CountAnalyseResponseDTO } from "./DTO/analyst";
-
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const countAnalyseAPI = async (): Promise<CountAnalyseResponseDTO> => {
   try {
     const storedToken = localStorage.getItem("token");
@@ -9,7 +9,7 @@ export const countAnalyseAPI = async (): Promise<CountAnalyseResponseDTO> => {
     }
 
     const response = await axios.get<CountAnalyseResponseDTO>(
-      `${process.env.BASE_URL}analyse/count`,
+      `${BASE_URL}analyse/count`,
       {
         headers: {
           "Content-Type": "application/json",

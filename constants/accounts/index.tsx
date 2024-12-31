@@ -380,20 +380,23 @@ export const titleTableHead: { title: string; key: SortableKeys | null }[] = [
   { title: "Action", key: null }
 ];
 
-export const titleDetailFirst: { title: string }[] = [
-  { title: "ID:" },
-  { title: "Full name:" },
-  { title: "Status:" }
+export const titleDetailFirst: { title: string; value: string }[] = [
+  { title: "ID", value: "_id" },
+  { title: "First name", value: "firstName" },
+  { title: "Last name", value: "lastName" },
+  { title: "Bio", value: "bio" }
 ];
-export const titleDetailSec: { title: string }[] = [
-  { title: "Email:" },
-  { title: "Phone:" },
-  { title: "Birth:" }
+export const titleDetailSec: { title: string; value: string }[] = [
+  { title: "Hobbies", value: "hobbies" },
+  { title: "Address", value: "address" },
+  { title: "Relationships", value: "relationShip" },
+  { title: "Birth", value: "birthDay" }
 ];
 export const titleDetailThir: { title: string }[] = [
-  { title: "Address:" },
-  { title: "Country:" },
-  { title: "Created At:" }
+  { title: "Status" },
+  { title: "Email" },
+  { title: "Phone" },
+  { title: "Created At" }
 ];
 
 export type SortablePostKeys =

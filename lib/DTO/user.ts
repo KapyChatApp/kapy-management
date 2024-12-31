@@ -37,14 +37,16 @@ export interface UserResponseDTO {
   bio: string;
   point: number;
   relationShip: string;
-  birthDay: Date;
-  attendDate: Date;
+  birthDay: string;
+  attendDate: string;
   flag: boolean;
-  friendIds: Schema.Types.ObjectId[];
-  bestFriendIds: Schema.Types.ObjectId[];
-  blockedIds: Schema.Types.ObjectId[];
-  createAt: Date;
-  createBy: Schema.Types.ObjectId;
+  friendIds: string[];
+  bestFriendIds: string[];
+  blockedIds: string[];
+  postIds: string[];
+  rateIds: string[];
+  createAt: string;
+  createBy: string;
 }
 
 export interface UpdateUserDTO {
@@ -57,7 +59,7 @@ export interface UpdateUserDTO {
   hobbies: string;
   bio: string;
   relationShip: string;
-  birthDay: Date;
+  birthDay: string;
 }
 
 export interface UpdatePasswordDTO {
@@ -101,4 +103,15 @@ export interface OnlineEvent {
   userId: string;
   online: boolean;
   updateTime: Date;
+}
+
+export interface FriendResponseDTO {
+  _id: string;
+  avatar: string;
+  firstName: string;
+  lastName: string;
+  nickName: string;
+  mutualFriends: ShortUserResponseDTO[];
+  createAt: string;
+  relation: string;
 }

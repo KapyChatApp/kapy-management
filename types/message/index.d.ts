@@ -1,16 +1,5 @@
-export interface MessageDetail {
-  id: string;
-  userId: string;
-  userName: string;
-  content: ImageContent | LinkContent | FileContent | TextContent;
-  createdAt: Date;
-  flag: boolean;
-}
-export interface MessageData {
-  message: MessageDetail;
-}
+import { ResponseMessageDTO } from "@/lib/DTO/message";
 
 export interface MessageDetailProps {
-  message: MessageData[];
-  handleSave: any;
+  message: ResponseMessageDTO;
 }

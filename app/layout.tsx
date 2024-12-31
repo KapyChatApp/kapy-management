@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import Sidebar from "@/components/shared/sidebar/Sidebar";
+import { MessageProvider } from "@/context/DataContext";
 
 const lexend = Lexend({
   subsets: ["latin"],
@@ -37,7 +38,9 @@ export default function RootLayout({
         cz-shortcut-listen="true"
         className="font-helvetica overflow-scroll custom-scrollbar"
       >
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <MessageProvider>{children}</MessageProvider>
+        </ThemeProvider>
         <Toaster />
       </body>
     </html>

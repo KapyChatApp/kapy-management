@@ -14,7 +14,6 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import { TableProps, TableUI } from "@/types";
 import {
-  messageDataList,
   SortableMessageKeys,
   titleTableHeadMessage
 } from "@/constants/messages";
@@ -267,7 +266,7 @@ const TableMessage: React.FC<TableUIMessage> = ({
                       return (
                         <div className="bg-status-audio bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
                           <p className="text-status-audio paragraph-15-regular">
-                            Link
+                            Audio
                           </p>
                         </div>
                       );
@@ -275,7 +274,7 @@ const TableMessage: React.FC<TableUIMessage> = ({
                       return (
                         <div className="bg-status-video bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
                           <p className="text-status-video paragraph-15-regular">
-                            Link
+                            Video
                           </p>
                         </div>
                       );

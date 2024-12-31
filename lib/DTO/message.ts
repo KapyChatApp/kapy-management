@@ -67,6 +67,7 @@ export interface ResponseMessageDTO {
   createAt: string;
   createBy: ShortUserResponseDTO;
   isReact: string[];
+  isReported: boolean;
 }
 
 export interface PusherRevoke {

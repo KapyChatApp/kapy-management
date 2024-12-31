@@ -53,7 +53,6 @@ export const defaultUserResponseDTO: UserResponseDTO = {
 
 const page = () => {
   const { id } = useParams<{ id: string }>() as { id: string };
-  // EditableParagraph
   const [detail, setDetail] = useState<UserResponseDTO>(defaultUserResponseDTO);
   useEffect(() => {
     const fetchData = async () => {
@@ -75,7 +74,6 @@ const page = () => {
     return <p>Account not found</p>;
   }
 
-  //MODAL CONFIRM
   const router = useRouter();
   const handleEditButton = () => {
     router.push(`/account/edit/${detail._id}`);

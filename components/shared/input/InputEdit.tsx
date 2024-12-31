@@ -21,11 +21,13 @@ const InputEdit = ({
   return (
     <div
       className={classNames(
-        "flex flex-col gap-[8px] text-text-dark-500",
+        "flex flex-col gap-[8px] text-dark100_light900",
         width
       )}
     >
-      <p className="text-text-dark-400">{titleInput}:</p>
+      <p className="text-dark100_light900 paragraph-15-regular">
+        {titleInput}:
+      </p>
       <input
         type="text"
         name={name} // Ensure each input has a unique name attribute

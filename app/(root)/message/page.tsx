@@ -8,16 +8,23 @@ import TableMessage from "@/components/message/TableMessage";
 import useSearchMessage from "@/hooks/use-search-message";
 import { ResponseMessageDTO } from "@/lib/DTO/message";
 import { fetchAllMessages } from "@/lib/message.service";
+import { useMessageContext } from "@/context/DataContext";
 
 const page = () => {
   const [filterItem, setFilter] = useState("all");
   const [data, setData] = useState<ResponseMessageDTO[]>([]);
+  const { setDataMessage } = useMessageContext();
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result: ResponseMessageDTO[] = await fetchAllMessages();
         if (result) {
+          result.sort(
+            (a, b) =>
+              new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+          );
           setData(result);
+          setDataMessage(result);
         }
       } catch (err: any) {
         console.error("Error fetching data:", err);

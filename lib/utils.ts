@@ -99,3 +99,20 @@ export function formatTime(dateString: Date): string {
     return `${dateStringFormat}, ${date.toLocaleTimeString([], options)}`;
   }
 }
+
+export const getDefaultIcon = (type: string) => {
+  switch (type) {
+    case "docx":
+      return "mdi:file-word";
+    case "doc":
+      return "mdi:file-word";
+    case "pptx":
+      return "mdi:file-powerpoint";
+    case "xlsx":
+      return "mdi:file-excel";
+    case "pdf":
+      return "bxs:file-pdf";
+    default:
+      return "basil:document-solid"; // Icon mặc định
+  }
+};

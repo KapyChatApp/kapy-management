@@ -6,7 +6,8 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Theme } from "./Theme";
 import Image from "next/image";
 import Notification from "./Notification";
-
+import { UserInfo } from "./UserInfo";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const Navbar = () => {
   return (
     <div className="flex flex-row gap-6 justify-start items-center w-full h-fit bg-transparent">
@@ -29,7 +30,7 @@ const Navbar = () => {
         <Theme />
       </div>
 
-      <div className="flex flex-row items-center justify-center rounded-lg h-9 w-[113px] background-light800_dark300 cursor-pointer">
+      {/* <div className="flex flex-row items-center justify-center rounded-lg h-9 w-[113px] background-light800_dark300 cursor-pointer">
         <div className="flex items-center justify-center w-fit h-fit gap-2 ">
           <Image
             src="/assets/ava/48.jpg"
@@ -43,7 +44,9 @@ const Navbar = () => {
             <p className="text_dark100_light900 small-light">Manager</p>
           </div>
         </div>
-      </div>
+      </div> */}
+
+      <UserInfo />
     </div>
   );
 };

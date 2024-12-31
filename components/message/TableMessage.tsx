@@ -19,6 +19,8 @@ import {
 } from "@/constants/messages";
 import { formatTime } from "@/lib/utils";
 import { ResponseMessageDTO } from "@/lib/DTO/message";
+import Confirm, { ConfirmModalProps } from "../shared/sidebar/Confirm";
+import { removeMessageById } from "@/lib/message.service";
 
 interface TableUIMessage {
   table: TableProps;
@@ -146,14 +148,31 @@ const TableMessage: React.FC<TableUIMessage> = ({
   }, [itemsPerPage, totalPages, dataLength, onPaginationData]);
 
   //Modal Confirm
-  const [confirm, setConfirm] = useState(false);
-  const handleRemove = () => {
-    setConfirm(!confirm);
+  const [isConfirm, setIsConfirm] = useState(false);
+  const [confirm, setConfirm] = useState<ConfirmModalProps>({
+    setConfirm: () => {},
+    handleAction: () => {},
+    name: "",
+    action: ""
+  });
+  const handleRemove = async (id: string) => {
+    try {
+      const result = await removeMessageById(id);
+      if (result) setData((item) => item.filter((msg) => msg._id != id));
+      alert("Report deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      alert("Failed to delete report.");
+    }
   };
-  const confirmModal = {
-    setConfirm,
-    name: "this message",
-    action: "remove"
+  const handleConfirmRemove = (reportId: string) => {
+    setIsConfirm(true);
+    setConfirm({
+      setConfirm: setIsConfirm,
+      handleAction: () => handleRemove(reportId),
+      name: " this message from database",
+      action: "remove"
+    });
   };
   return (
     <>
@@ -311,7 +330,7 @@ const TableMessage: React.FC<TableUIMessage> = ({
                   </Link>
                   <Button
                     className="flex w-fit h-fit rounded-lg bg-accent-red p-[8px] bg-opacity-20 shadow-none border-none hover:bg-accent-red hover:bg-opacity-20"
-                    onClick={handleRemove}
+                    onClick={() => handleConfirmRemove(item._id)}
                   >
                     <Icon
                       icon="gravity-ui:trash-bin"
@@ -327,7 +346,7 @@ const TableMessage: React.FC<TableUIMessage> = ({
         </TableBody>
       </Table>
 
-      {confirm && <ConfirmModal confirm={confirmModal} />}
+      {isConfirm && <Confirm confirm={confirm} />}
     </>
   );
 };

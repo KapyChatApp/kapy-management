@@ -70,12 +70,13 @@ export const removeMessageById = async (messageId: string) => {
         }
       }
     );
-
     if (response.status === 200) {
       console.log("Message removed successfully");
     } else {
       console.error("Failed to remove message:", response.data.message);
     }
+
+    return response;
   } catch (error) {
     console.error("Error removing message:", error);
     throw error;

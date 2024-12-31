@@ -7,7 +7,7 @@ import { PostResponseDTO } from "@/lib/DTO/post";
 import { fetchUserPosts } from "@/lib/account.service";
 import { useParams } from "next/navigation";
 
-const PostDetail = ({ account }: AccountDetailProps) => {
+const PostDetail = ({ account, pointRaw }: AccountDetailProps) => {
   const [data, setData] = useState<PostResponseDTO[]>([]);
   const { id } = useParams<{ id: string }>() as { id: string };
   useEffect(() => {
@@ -51,7 +51,7 @@ const PostDetail = ({ account }: AccountDetailProps) => {
             Point trust:
           </p>
           <p className="text-dark100_light900 paragraph-15-semibold">
-            {account.point}
+            {pointRaw ? pointRaw : account.point}
           </p>
         </div>
       </div>

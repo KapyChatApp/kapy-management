@@ -37,4 +37,5 @@ export interface AccountData {
 
 export interface AccountDetailProps {
   account: UserResponseDTO;
+  pointRaw?: number;
 }

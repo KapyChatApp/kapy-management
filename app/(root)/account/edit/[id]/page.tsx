@@ -1,4 +1,5 @@
 "use client";
+import EditPointModal from "@/components/account/EditPointModal";
 import FriendList from "@/components/account/FriendList";
 import GeneralEdit from "@/components/account/GeneralEdit";
 import PostDetail from "@/components/account/PostDetail";
@@ -53,12 +54,14 @@ const page = () => {
   const { id } = useParams<{ id: string }>() as { id: string };
   // EditableParagraph
   const [detail, setDetail] = useState<UserResponseDTO>(defaultUserResponseDTO);
+  const [pointRaw, setPointRaw] = useState(0);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const result = await getUserProfile(id);
         if (result) {
           setDetail(result);
+          setPointRaw(result.point);
         }
       } catch (err: any) {
         console.error("Error fetching data:", err);
@@ -236,6 +239,11 @@ const page = () => {
     });
   };
 
+  //Open Update Point
+  const [isClose, setClose] = useState(true);
+  const handleOpenUpdatePoint = () => {
+    setClose(false);
+  };
   return (
     <>
       <div className="flex flex-col items-start justify-center w-full h-fit gap-6 ">
@@ -260,35 +268,55 @@ const page = () => {
               handleChangeStatus={handleChangeStatus}
             />
 
-            <PostDetail account={detail} />
+            <PostDetail account={detail} pointRaw={pointRaw} />
 
             <FriendList account={detail} />
           </div>
-          <div className="flex flex-row items-center justify-center gap-8 pt-10">
-            <Button
-              className="shadow-md flex flex-row border-light-500 items-center justify-center  hover:border-light-500 bg-transparent hover:bg-transparent  border rounded-lg"
-              onClick={handleConfirmSave}
-            >
-              <p className="text-dark100_light900 paragraph-regular">Save</p>
-            </Button>
-
-            <Button className="shadow-md flex flex-row items-center justify-center  bg-accent-red hover:bg-accent-red border-none rounded-lg">
-              <p
-                className="text-light-900 paragraph-regular"
-                onClick={
-                  detail.flag
-                    ? handleConfirmDeactivate
-                    : handleConfirmReactivate
-                }
+          <div className=" flex flex-row w-full h-fit justify-between items-center">
+            <div className="flex flex-row items-center justify-center gap-8 pt-10 w-fit">
+              <Button
+                className="shadow-md flex flex-row border-light-500 items-center justify-center  hover:border-light-500 bg-transparent hover:bg-transparent  border rounded-lg"
+                onClick={handleConfirmSave}
               >
-                {detail.flag ? "Deactivate" : "Reactivate"}
-              </p>
-            </Button>
+                <p className="text-dark100_light900 paragraph-regular">Save</p>
+              </Button>
+
+              <Button className="shadow-md flex flex-row items-center justify-center  bg-accent-red hover:bg-accent-red border-none rounded-lg">
+                <p
+                  className="text-light-900 paragraph-regular"
+                  onClick={
+                    detail.flag
+                      ? handleConfirmDeactivate
+                      : handleConfirmReactivate
+                  }
+                >
+                  {detail.flag ? "Deactivate" : "Reactivate"}
+                </p>
+              </Button>
+            </div>
+
+            <div className="flex flex-row items-center justify-center gap-8 pt-10 w-fit">
+              <Button
+                className="shadow-md flex flex-row border-primary-500 items-center justify-center hover:border-primary-500 bg-transparent hover:bg-transparent border rounded-lg"
+                onClick={handleOpenUpdatePoint}
+              >
+                <p className="text-primary-500 paragraph-regular">
+                  Update Point
+                </p>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
 
       {isConfirm && <Confirm confirm={confirm} />}
+      {!isClose && (
+        <EditPointModal
+          point={pointRaw}
+          setPoint={setPointRaw}
+          setClose={setClose}
+        />
+      )}
     </>
   );
 };

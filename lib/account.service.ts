@@ -251,31 +251,6 @@ export async function reactiveUser(userId: string | null) {
   }
 }
 
-export const deleteRateById = async (pointId: string, userId: string) => {
-  try {
-    const storedToken = localStorage.getItem("token");
-    if (!storedToken) {
-      throw new Error("No token found");
-    }
-
-    const response = await axios.delete(
-      `${BASE_URL}point/manage/delete?userId=${userId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `${storedToken}`
-        },
-        params: { pointId }
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error("Error deleting rate:", error);
-    throw error;
-  }
-};
-
 export const subtractUserPoints = async (userId: string, point: number) => {
   try {
     const storedToken = localStorage.getItem("token");
@@ -285,12 +260,12 @@ export const subtractUserPoints = async (userId: string, point: number) => {
 
     const response = await axios.patch(
       `${BASE_URL}point/manage/minus?userId=${userId}&point=${point}`,
+      null,
       {
         headers: {
           "Content-Type": "application/json",
           Authorization: `${storedToken}`
-        },
-        params: { userId, point }
+        }
       }
     );
 

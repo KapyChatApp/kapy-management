@@ -9,17 +9,16 @@ import {
 } from "@/components/ui/table";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
-  accountDataList,
   SortableFriendsKeys,
-  SortableKeys,
   SortablePostKeys,
   titleFriendList,
   titlePostDetail
 } from "@/constants/accounts";
-import { FriendList, PostList } from "@/types/accounts";
+import { PostResponseDTO } from "@/lib/DTO/post";
+import { FriendResponseDTO, UserResponseDTO } from "@/lib/DTO/user";
 
 interface TablePostDetailProps {
-  otherList: PostList[] | FriendList[];
+  otherList: PostResponseDTO[] | FriendResponseDTO[];
 }
 
 const TableOtherList = ({ otherList }: TablePostDetailProps) => {
@@ -33,30 +32,28 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
   });
 
   const getValueByKey = (
-    item: PostList | FriendList,
+    item: PostResponseDTO | FriendResponseDTO,
     key: SortablePostKeys | SortableFriendsKeys
   ) => {
-    if ("title" in item) {
+    if ("caption" in item) {
       // Đây là PostList
       switch (key) {
         case "otherList.id":
-          return item.id;
+          return item._id;
         case "otherList.title":
-          return item.title;
+          return item.caption;
         case "otherList.createdAt":
-          return item.createdAt;
+          return new Date(item.createAt).toLocaleDateString();
         default:
           return "";
       }
-    } else if ("userName" in item) {
+    } else {
       // Đây là FriendList
       switch (key) {
         case "otherList.id":
-          return item.id;
+          return item._id;
         case "otherList.userName":
-          return item.userName;
-        case "otherList.addedAt":
-          return item.addedAt; // Nếu muốn sắp xếp theo ngày thêm của FriendList
+          return item.firstName + " " + item.lastName;
         default:
           return "";
       }
@@ -78,12 +75,6 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
     ) {
       aParsedValue = parseInt(aValue, 10);
       bParsedValue = parseInt(bValue, 10);
-    }
-
-    // Kiểm tra nếu giá trị là Date, chuyển nó thành số bằng getTime()
-    if (aValue instanceof Date && bValue instanceof Date) {
-      aParsedValue = aValue.getTime();
-      bParsedValue = bValue.getTime();
     }
 
     if (aParsedValue < bParsedValue) {
@@ -145,7 +136,7 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
       <TableBody>
         {sortedData.map((item, index) => (
           <TableRow
-            key={item.id}
+            key={item._id}
             className="cursor-default hover:bg-transparent"
           >
             <TableCell className="text-left">
@@ -153,7 +144,7 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
                 className={`justify-start w-full flex flex-row items-center  gap-1 h-fit`}
               >
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.id}
+                  {item._id}
                 </p>
               </div>
             </TableCell>
@@ -162,7 +153,9 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
                 className={`justify-center w-full flex flex-row items-center  gap-1 h-fit`}
               >
                 <p className="text-dark100_light900 paragraph-regular">
-                  {"title" in item ? item.title : item.userName}
+                  {"caption" in item
+                    ? item.caption
+                    : item.firstName + " " + item.lastName}
                 </p>
               </div>
             </TableCell>
@@ -171,15 +164,13 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
                 className={`justify-center w-full flex flex-row items-center  gap-1 h-fit`}
               >
                 <p className="text-dark100_light900 paragraph-regular">
-                  {"title" in item
-                    ? item.createdAt.toLocaleString()
-                    : item.addedAt.toLocaleString()}
+                  {new Date(item.createAt).toLocaleString()}
                 </p>
               </div>
             </TableCell>
             <TableCell className="text-left">
               {(() => {
-                switch ("title" in item ? item.flag : item.relationship) {
+                switch ("caption" in item ? item.flag : item.relation) {
                   case true:
                     return (
                       <div className="flex w-full justify-start">
@@ -190,22 +181,22 @@ const TableOtherList = ({ otherList }: TablePostDetailProps) => {
                         </div>
                       </div>
                     );
-                  case "Best Friend":
+                  case "bff":
                     return (
                       <div className="flex w-full justify-start">
                         <div className="flex bg-primary-500 bg-opacity-20 rounded-lg w-[96px] items-center justify-center h-fit p-1">
                           <p className="text-primary-500 paragraph-15-regular">
-                            {!("title" in item) && item.relationship}
+                            {!("caption" in item) && item.relation}
                           </p>
                         </div>
                       </div>
                     );
-                  case "Friend":
+                  case "friend":
                     return (
                       <div className="flex w-full justify-start">
                         <div className="flex bg-accent-blue bg-opacity-20 rounded-lg w-[90px] items-center justify-center h-fit p-1">
                           <p className="text-accent-blue paragraph-15-regular">
-                            {!("title" in item) && item.relationship}
+                            {!("caption" in item) && item.relation}
                           </p>
                         </div>
                       </div>

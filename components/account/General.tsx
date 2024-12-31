@@ -7,8 +7,14 @@ import {
 } from "@/constants/accounts";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { AccountData, AccountDetailProps } from "@/types/accounts";
+import { UserResponseDTO } from "@/lib/DTO/user";
+import LabelInformation from "../shared/LabelInformation";
 
-const General = ({ account, handleSave }: AccountDetailProps) => {
+interface props {
+  account: UserResponseDTO;
+}
+
+const General = ({ account }: props) => {
   return (
     <div className="flex flex-col items-start justify-center w-full gap-4">
       <div className="flex flex-row w-full h-fit gap-[10px] items-end justify-start">
@@ -25,54 +31,42 @@ const General = ({ account, handleSave }: AccountDetailProps) => {
         <div className="flex flex-col gap-4 w-fit h-fit">
           {titleDetailFirst.map((item) => {
             const text =
-              item.title === "ID:"
-                ? account[0].account.userId
-                : item.title === "Full name:"
-                ? account[0].account.fullName
-                : account[0].account.status
-                ? "Active"
-                : "Inactive";
-            return (
-              <EditableParagraph
-                title={item.title}
-                initialText={text}
-                onSave={handleSave}
-              />
-            );
+              item.title === "ID"
+                ? account._id
+                : item.title === "First name"
+                ? account.firstName
+                : item.title === "Last name"
+                ? account.lastName
+                : account.bio;
+            return <LabelInformation content={text} title={item.title} />;
           })}
         </div>
         <div className="flex flex-col gap-4 w-fit h-fit">
           {titleDetailSec.map((item) => {
             const text =
-              item.title === "Email:"
-                ? account[0].account.email
-                : item.title === "Phone:"
-                ? account[0].account.phone
-                : account[0].account.birth.toLocaleDateString();
-            return (
-              <EditableParagraph
-                title={item.title}
-                initialText={text}
-                onSave={handleSave}
-              />
-            );
+              item.title === "Hobbies"
+                ? account.hobbies
+                : item.title === "Address"
+                ? account.address
+                : item.title === "Relationships"
+                ? account.relationShip
+                : new Date(account.birthDay).toLocaleDateString();
+            return <LabelInformation content={text} title={item.title} />;
           })}
         </div>
         <div className="flex flex-col gap-4 w-fit h-fit">
           {titleDetailThir.map((item) => {
             const text =
-              item.title === "Address:"
-                ? account[0].account.address
-                : item.title === "Country:"
-                ? account[0].account.country
-                : account[0].account.createdAt.toLocaleDateString();
-            return (
-              <EditableParagraph
-                title={item.title}
-                initialText={text}
-                onSave={handleSave}
-              />
-            );
+              item.title === "Email"
+                ? account.email
+                : item.title === "Status"
+                ? account.flag
+                  ? "Active"
+                  : "Inactive"
+                : item.title === "Phone"
+                ? account.phoneNumber
+                : new Date(account.attendDate).toLocaleDateString();
+            return <LabelInformation content={text} title={item.title} />;
           })}
         </div>
       </div>

@@ -11,14 +11,32 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
-import { TableUI } from "@/types";
+import { TableProps, TableUI } from "@/types";
 import {
   reportDataList,
   SortableReportKeys,
   titleTableHeadReport
 } from "@/constants/reports";
+import { ReportResponseDTO } from "@/lib/DTO/report";
+import Confirm, { ConfirmModalProps } from "../shared/sidebar/Confirm";
+import { removeReport } from "@/lib/report.service";
+interface TableUIReport {
+  table: TableProps;
+  onPaginationData: (
+    itemsPerPage: number,
+    totalPages: number,
+    dataLength: number
+  ) => void;
+  list: ReportResponseDTO[];
+  setData: React.Dispatch<React.SetStateAction<ReportResponseDTO[]>>;
+}
 
-const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
+const TableReport: React.FC<TableUIReport> = ({
+  table,
+  onPaginationData,
+  list,
+  setData
+}) => {
   const {
     indexOfLastItem,
     indexOfFirstItem,
@@ -32,46 +50,42 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
     key: SortableReportKeys;
     direction: "ascending" | "descending";
   }>({
-    key: "report.id",
+    key: "_id",
     direction: "ascending"
   });
 
-  const getValueByKey = (
-    item: (typeof reportDataList)[0],
-    key: SortableReportKeys
-  ) => {
+  const getValueByKey = (item: (typeof list)[0], key: SortableReportKeys) => {
     switch (key) {
-      case "report.id":
-        return item.report.id;
-      case "report.reporterInfo.name":
-        return item.report.reporterInfo.name;
-      case "report.createdAt":
-        return item.report.createdAt;
+      case "_id":
+        return item._id;
+      case "userId.name":
+        return item.userId.firstName + item.userId.lastName;
+      case "createAt":
+        return new Date(item.createAt);
       default:
         return "";
     }
   };
-  const sortedData = [...reportDataList].sort((a, b) => {
+  const sortedData = [...list].sort((a, b) => {
     const aValue = getValueByKey(a, sortConfig.key);
     const bValue = getValueByKey(b, sortConfig.key);
 
     let aParsedValue: number | string | Date = aValue;
     let bParsedValue: number | string | Date = bValue;
 
-    // Kiểm tra nếu key là account.userId và giá trị là string, chuyển nó thành số
-    if (
-      sortConfig.key === "report.id" &&
+    // So sánh đối tượng Date
+    if (aParsedValue instanceof Date && bParsedValue instanceof Date) {
+      // Nếu giá trị là Date, so sánh theo thời gian
+      aParsedValue = aParsedValue.getTime();
+      bParsedValue = bParsedValue.getTime();
+    } else if (
+      sortConfig.key === "_id" &&
       typeof aValue === "string" &&
       typeof bValue === "string"
     ) {
+      // Nếu là _id và là chuỗi, chuyển sang số
       aParsedValue = parseInt(aValue, 10);
       bParsedValue = parseInt(bValue, 10);
-    }
-
-    // Kiểm tra nếu giá trị là Date, chuyển nó thành số bằng getTime()
-    if (aValue instanceof Date && bValue instanceof Date) {
-      aParsedValue = aValue.getTime();
-      bParsedValue = bValue.getTime();
     }
 
     if (aParsedValue < bParsedValue) {
@@ -82,6 +96,7 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
     }
     return 0;
   });
+
   const requestSort = (key: SortableReportKeys) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
@@ -92,20 +107,18 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
 
   //Filter
   const filteredData = sortedData.filter((item) => {
-    if (filterItem === "rejected") {
-      return item.report.status === "rejected";
+    if (filterItem === "pending") {
+      return item.status === "pending";
     } else if (filterItem === "resolved") {
-      return item.report.status === "resolved";
-    } else if (filterItem === "pending") {
-      return item.report.status === "pending";
-    } else if (filterItem === "link") {
-      return item.report.targetedItem.type === "link";
-    } else if (filterItem === "file") {
-      return item.report.targetedItem.type === "file";
-    } else if (filterItem === "text") {
-      return item.report.targetedItem.type === "text";
+      return item.status === "solved";
     } else if (filterItem === "user") {
-      return item.report.targetedItem.type === "user";
+      return item.targetType === "User";
+    } else if (filterItem === "message") {
+      return item.targetType === "Message";
+    } else if (filterItem === "Comment") {
+      return item.targetType === "comment";
+    } else if (filterItem === "Post") {
+      return item.targetType === "post";
     }
     return true;
   });
@@ -121,14 +134,33 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
   }, [itemsPerPage, totalPages, dataLength, onPaginationData]);
 
   //Modal Confirm
-  const [confirm, setConfirm] = useState(false);
-  const handleRemove = () => {
-    setConfirm(!confirm);
+  const [isConfirm, setIsConfirm] = useState(false);
+  const [confirm, setConfirm] = useState<ConfirmModalProps>({
+    setConfirm: () => {},
+    handleAction: () => {},
+    name: "",
+    action: ""
+  });
+  const handleRemove = async (reportId: string) => {
+    try {
+      const result = await removeReport(reportId);
+      if (result)
+        setData((item) => item.filter((report) => report._id != reportId));
+      alert("Report deleted successfully!");
+      console.log(result);
+    } catch (error) {
+      console.error("Error deleting report:", error);
+      alert("Failed to delete report.");
+    }
   };
-  const confirmModal = {
-    setConfirm,
-    name: "this account",
-    action: "remove"
+  const handleConfirmRemove = (reportId: string) => {
+    setIsConfirm(true);
+    setConfirm({
+      setConfirm: setIsConfirm,
+      handleAction: () => handleRemove(reportId),
+      name: " this report",
+      action: "remove"
+    });
   };
   return (
     <>
@@ -178,63 +210,36 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
         <TableBody>
           {displayedData.map((item) => (
             <TableRow
-              key={item.report.id}
+              key={item._id}
               className="cursor-default hover:bg-transparent"
             >
               <TableCell className="text-left">
-                <div className="flex flex-row items-center justify-start gap-1 w-fit h-fit">
-                  <p className="text-dark100_light900 paragraph-regular">
-                    {item.report.id}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell className="text-left">
                 <p className="text-dark100_light900 paragraph-regular">
-                  {item.report.createdAt.toLocaleDateString()}
+                  {item._id}
                 </p>
               </TableCell>
               <TableCell className="text-left">
-                <div className="flex max-w-[170px]">
-                  <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
-                    {item.report.reporterInfo.name}
-                  </p>
-                </div>
+                <p className="text-dark100_light900 paragraph-regular">
+                  {new Date(item.createAt).toLocaleDateString()}
+                </p>
               </TableCell>
               <TableCell className="text-left">
-                <div className="flex max-w-[198px]">
-                  <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
-                    {item.report.title}
+                <p className="text-dark100_light900 paragraph-regular">
+                  {item.userId.firstName + " " + item.userId.lastName}
+                </p>
+              </TableCell>
+              <TableCell className="text-left">
+                <div className="flex items-center justify-start w-[200px] min-w-0">
+                  <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis w-full">
+                    {item.content}
                   </p>
                 </div>
               </TableCell>
+
               <TableCell className="text-left ">
                 {(() => {
-                  switch (item.report.targetedItem.type) {
-                    case "image":
-                      return (
-                        <div className="bg-status-image bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
-                          <p className="text-status-image paragraph-15-regular">
-                            Image
-                          </p>
-                        </div>
-                      );
-                    case "link":
-                      return (
-                        <div className="bg-status-link bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
-                          <p className="text-status-link paragraph-15-regular">
-                            Link
-                          </p>
-                        </div>
-                      );
-                    case "file":
-                      return (
-                        <div className="bg-status-file bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
-                          <p className="text-status-file paragraph-15-regular">
-                            File
-                          </p>
-                        </div>
-                      );
-                    case "user":
+                  switch (item.targetType) {
+                    case "User":
                       return (
                         <div className="bg-status-user bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
                           <p className="text-status-user paragraph-15-regular">
@@ -242,11 +247,35 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
                           </p>
                         </div>
                       );
+                    case "Message":
+                      return (
+                        <div className="bg-status-image bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-image paragraph-15-regular">
+                            Message
+                          </p>
+                        </div>
+                      );
+                    case "Post":
+                      return (
+                        <div className="bg-status-link bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-link paragraph-15-regular">
+                            Post
+                          </p>
+                        </div>
+                      );
+                    case "Comment":
+                      return (
+                        <div className="bg-status-file bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-file paragraph-15-regular">
+                            Comment
+                          </p>
+                        </div>
+                      );
                     default:
                       return (
                         <div className="bg-status-text bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
                           <p className="text-status-text paragraph-15-regular">
-                            Text
+                            Others
                           </p>
                         </div>
                       );
@@ -255,28 +284,28 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
               </TableCell>
               <TableCell className="text-left">
                 {(() => {
-                  switch (item.report.status) {
-                    case "resolved":
+                  switch (item.status) {
+                    case "solved":
                       return (
-                        <div className="flex bg-accent-green bg-opacity-20 rounded-lg w-[86px] items-center justify-center h-fit p-1">
+                        <div className="flex bg-accent-green bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
                           <p className="text-accent-green paragraph-15-regular">
                             Resolved
                           </p>
                         </div>
                       );
-                    case "pending":
+                    case "rejected":
                       return (
-                        <div className="flex bg-primary-500 bg-opacity-20 rounded-lg w-[86px] items-center justify-center h-fit p-1">
-                          <p className="text-primary-500 paragraph-15-regular">
-                            Pending
+                        <div className="flex bg-accent-red bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
+                          <p className="text-accent-red paragraph-15-regular">
+                            Rejected
                           </p>
                         </div>
                       );
                     default:
                       return (
-                        <div className="flex bg-accent-red bg-opacity-20 rounded-lg w-[86px] items-center justify-center h-fit p-1">
-                          <p className="text-accent-red paragraph-15-regular">
-                            Rejected
+                        <div className="flex bg-primary-500 bg-opacity-20 rounded-lg w-[84px] items-center justify-center h-fit p-1">
+                          <p className="text-primary-500 paragraph-15-regular">
+                            Pending
                           </p>
                         </div>
                       );
@@ -285,7 +314,7 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
               </TableCell>
               <TableCell className="text-left">
                 <div className="flex items-center justify-start gap-4">
-                  <Link href={`/report/${item.report.id}`}>
+                  <Link href={`/report/${item._id}`}>
                     <div className="flex w-fit h-fit rounded-lg bg-accent-blue p-[8px] bg-opacity-20 hover:bg-accent-blue hover:bg-opacity-20">
                       <Icon
                         icon="ph:eye"
@@ -297,7 +326,7 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
                   </Link>
                   <Button
                     className="flex w-fit h-fit rounded-lg bg-accent-red p-[8px] bg-opacity-20 shadow-none border-none hover:bg-accent-red hover:bg-opacity-20"
-                    onClick={handleRemove}
+                    onClick={() => handleConfirmRemove(item._id)}
                   >
                     <Icon
                       icon="gravity-ui:trash-bin"
@@ -313,7 +342,7 @@ const TableReport: React.FC<TableUI> = ({ table, onPaginationData }) => {
         </TableBody>
       </Table>
 
-      {confirm && <ConfirmModal confirm={confirmModal} />}
+      {isConfirm && <Confirm confirm={confirm} />}
     </>
   );
 };

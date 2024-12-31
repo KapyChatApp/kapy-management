@@ -1,11 +1,49 @@
+"use client";
 import InputCustom from "@/components/auth/InputCustom";
 import { Button } from "@/components/ui/button";
-import { inputCustomItems } from "@/constants/auth";
+import { loginUser } from "@/lib/auth.service";
+import { InputCustomProps } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
-import React from "react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 const Signin = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+  const inputCustomItems: InputCustomProps[] = [
+    { placeholder: "PhoneNumber", value: "", setValue: setPhoneNumber },
+    { placeholder: "Password", value: "", setValue: setPassword }
+  ];
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    try {
+      const userData = { phoneNumber, password };
+      console.log(userData, "check");
+      const user = await loginUser(userData);
+      console.log(user);
+      if (user) {
+        const userRoles = user.roles;
+        if (userRoles.includes("admin")) {
+          localStorage.setItem("token", user.token);
+          const decodedToken = JSON.parse(atob(user.token.split(".")[1]));
+          const userId = decodedToken?.id;
+          localStorage.setItem("userId", userId);
+          window.location.href = "/";
+        } else {
+          setErrorMessage("You do not have access!");
+        }
+      } else {
+        setErrorMessage("Login failed!");
+      }
+    } catch (error: any) {
+      console.error("Error login:", error);
+      setErrorMessage(error.message || "Error.");
+    }
+  };
   return (
     <div className="flex flex-col items-start justify-center w-full h-fit gap-[48px]">
       <div className="flex flex-col gap-4 items-start justify-center w-full h-fit">
@@ -17,8 +55,13 @@ const Signin = () => {
 
       <div className="flex flex-col w-full h-fit gap-3">
         <div className="flex flex-col gap-6 w-full h-fit">
-          {inputCustomItems.slice(0, 2).map((item) => (
-            <InputCustom placeholder={item.placeholder} value={item.value} />
+          {inputCustomItems.map((item, index) => (
+            <InputCustom
+              key={index}
+              placeholder={item.placeholder}
+              value={item.value}
+              setValue={item.setValue}
+            />
           ))}
         </div>
         <Link
@@ -32,7 +75,10 @@ const Signin = () => {
       </div>
 
       <div className="flex flex-col gap-6 items-start justify-center w-full h-fit">
-        <Button className="border-none bg-primary-500 hover:bg-primary-500  shadow-none w-full h-fit py-4 rounded-[20px] ">
+        <Button
+          className="border-none bg-primary-500 hover:bg-primary-500  shadow-none w-full h-fit py-4 rounded-[20px] "
+          onClick={handleSubmit}
+        >
           <p className="text-[20px] font-bold text-light-900 h-[30px]">
             Sign in
           </p>

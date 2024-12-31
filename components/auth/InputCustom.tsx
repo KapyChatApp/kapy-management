@@ -18,12 +18,16 @@ import {
 import { Calendar } from "../ui/calendar";
 import { genderList } from "@/constants/auth";
 
-const InputCustom = ({ placeholder, value }: InputCustomProps) => {
+const InputCustom = ({ placeholder, setValue }: InputCustomProps) => {
   const [date, setDate] = React.useState<Date | undefined>();
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setValue(newValue);
   };
   return placeholder === "Password" || placeholder === "Confirmed password" ? (
     <div className=" border-light-500 border-b relative flex h-[24px] min-h-[36px] grow items-center gap-[12px] w-full bg-transparent">
@@ -32,7 +36,7 @@ const InputCustom = ({ placeholder, value }: InputCustomProps) => {
         className="bg-transparent border-none focus:outline-none ring-0 border-light-500 border-b placeholder:text-dark600_light600 placeholder:paragraph-light px-2 py-1 w-full"
         placeholder={placeholder}
         //value={value}
-        // onChange={onChange}
+        onChange={handleChange}
       />
       <Icon
         icon={showPassword ? "fluent:eye-12-filled" : "mingcute:eye-close-fill"}
@@ -42,27 +46,17 @@ const InputCustom = ({ placeholder, value }: InputCustomProps) => {
         onClick={togglePasswordVisibility}
       />
     </div>
-  ) : placeholder === "Phone number" ? (
-    <div className="border-light-500 border-b relative flex h-[24px] min-h-[36px] grow items-center w-full bg-transparent">
-      <Input
-        className="bg-transparent border-none focus:outline-none ring-0 border-light-500 border-b placeholder:text-dark600_light600 placeholder:paragraph-light px-2 py-1 w-full"
-        type="number"
-        placeholder={placeholder}
-        // onChange={handleChange}
-        // onBlur={handleEditToggle}
-      />
-    </div>
   ) : placeholder === "Birth" ? (
     <Popover>
       <PopoverTrigger asChild>
         <Button
           className={cn(
-            "w-full p-0 justify-start text-left h-[24px] min-h-[36px] shadow-none focus:shadow-none",
+            "w-full p-0 justify-start text-left h-[24px] min-h-[36px] shadow-none",
             !date &&
-              "text-dark100_light900 paragraph-light bg-transparent hover:bg-transparent shadow-none "
+              "text-dark100_light900 paragraph-light bg-transparent hover:bg-transparent shadow-none"
           )}
         >
-          <div className="flex w-full rounded-none h-[24px] min-h-[36px]  items-center justify-between border-b border-light-500 bg-transparent py-1 px-2 shadow-none">
+          <div className="flex w-full rounded-md h-[24px] min-h-[36px]  items-center justify-between border-b border-light-500 bg-transparent py-1 px-2 shadow-none text-dark100_light900">
             {date ? (
               format(date, "PPP")
             ) : (
@@ -81,13 +75,30 @@ const InputCustom = ({ placeholder, value }: InputCustomProps) => {
           }
         ></Select>
         <div className="rounded-md border text-dark100_light900 paragraph-regular">
-          <Calendar mode="single" selected={date} onSelect={setDate} />
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={(selectedDate) => {
+              setDate(selectedDate);
+              if (placeholder === "Birth" && setValue) {
+                setValue(selectedDate?.toISOString() || "");
+              }
+            }}
+            disabled={(date) => date > addDays(new Date(), 1)}
+            initialFocus
+          />
         </div>
       </PopoverContent>
     </Popover>
   ) : placeholder === "Gender" ? (
-    <div className="flex w-full border-b border-light500 bg-transparent h-[24px] min-h-[36px]">
-      <Select>
+    <div className="flex w-full h-fit border-b border-light500 bg-transparent">
+      <Select
+        onValueChange={(value) => {
+          if (placeholder === "Gender" && setValue) {
+            setValue(value);
+          }
+        }}
+      >
         <SelectTrigger className="w-full bg-transparent focus border-none py-1 px-2 shadow-none">
           <SelectValue className="paragraph-regular text-dark100_light900" />
         </SelectTrigger>
@@ -110,8 +121,7 @@ const InputCustom = ({ placeholder, value }: InputCustomProps) => {
         className="bg-transparent border-none focus:outline-none ring-0 border-light-500 border-b placeholder:text-dark600_light600 placeholder:paragraph-light px-2 py-1 w-full"
         type="text"
         placeholder={placeholder}
-        // onChange={handleChange}
-        // onBlur={handleEditToggle}
+        onChange={handleChange}
       />
     </div>
   );

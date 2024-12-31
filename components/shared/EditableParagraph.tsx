@@ -16,7 +16,7 @@ const EditableParagraph = ({ title, initialText, onSave }: any) => {
       onSave(text); // Gọi hàm onSave khi lưu
     }
   };
-
+  console.log(initialText);
   return (
     <div className="flex flex-row gap-2 items-start justify-start">
       <p className="text-dark100_light900 paragraph-15-light">{title}</p>

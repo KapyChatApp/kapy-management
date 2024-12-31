@@ -9,28 +9,29 @@ import {
   ChartOptions
 } from "chart.js";
 import { useTheme } from "@/context/ThemeProvider";
+import { CountAnalyseResponseDTO } from "@/lib/DTO/analyst";
 
 // Đăng ký các thành phần cần thiết
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const data = {
-  labels: [
-    "18 - 24 years old",
-    "25 - 40 years old",
-    "40 - 55 years old",
-    "55+ years old"
-  ],
-  datasets: [
-    {
-      data: [400, 300, 300, 200],
-      backgroundColor: ["#FFBA00", "#00AC47", "#2684FC", "#CCCCCC"]
-    }
-  ]
-};
+interface props {
+  data: CountAnalyseResponseDTO;
+}
 
-const JoinersChart = () => {
+const JoinersChart = ({ data }: props) => {
   const { mode } = useTheme();
-
+  const lt18 = data.user ? Number(data.user.age.lt18) : 0;
+  const gte18lte50 = data.user ? Number(data.user.age.gte18lte50) : 0;
+  const gt50 = data.user ? Number(data.user.age.gt50) : 0;
+  const dataChart = {
+    labels: ["below 18 years old", "18 - 50 years old", "50+ years old"],
+    datasets: [
+      {
+        data: [lt18, gte18lte50, gt50],
+        backgroundColor: ["#FFBA00", "#00AC47", "#2684FC", "#CCCCCC"]
+      }
+    ]
+  };
   const options: ChartOptions<"pie"> = {
     responsive: true,
     plugins: {
@@ -57,7 +58,7 @@ const JoinersChart = () => {
 
   return (
     <div className="w-full h-full bg-transparent">
-      <Pie data={data} options={options} />
+      <Pie data={dataChart} options={options} />
     </div>
   );
 };

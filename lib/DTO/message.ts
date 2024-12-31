@@ -42,6 +42,7 @@ export interface MessageBoxDTO {
 }
 
 export interface FileContent {
+  _id: string;
   fileName: string;
   url: string;
   publicId: string;

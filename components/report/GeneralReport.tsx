@@ -1,9 +1,11 @@
 import { titleReportedPerson, titleReporter } from "@/constants/reports";
-import { ReportDetailProps } from "@/types/reports";
+import { ReportResponseDTO } from "@/lib/DTO/report";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { report } from "process";
 import React from "react";
-import EditableParagraph from "../shared/EditableParagraph";
+export interface ReportDetailProps {
+  report: ReportResponseDTO;
+}
 
 const GeneralReport = ({ report }: ReportDetailProps) => {
   return (
@@ -23,10 +25,10 @@ const GeneralReport = ({ report }: ReportDetailProps) => {
           {titleReporter.map((item) => {
             const text =
               item.title === "Reporter ID:"
-                ? report[0].report.reporterInfo.id
+                ? report.userId._id
                 : item.title === "Reporter Name:"
-                ? report[0].report.reporterInfo.name
-                : report[0].report.reporterInfo.status
+                ? report.userId.firstName + " " + report.userId.lastName
+                : report.userId.flag
                 ? "Active"
                 : "Inactive";
             return (
@@ -45,12 +47,16 @@ const GeneralReport = ({ report }: ReportDetailProps) => {
           {titleReportedPerson.map((item) => {
             const text =
               item.title === "Reported ID:"
-                ? report[0].report.reportedInfo.id
+                ? report.target._id
                 : item.title === "Reported Person:"
-                ? report[0].report.reportedInfo.name
-                : report[0].report.reportedInfo.status
-                ? "Active"
-                : "Inactive";
+                ? "firstName" in report.target
+                  ? report.target.firstName + " " + report.target.lastName
+                  : ""
+                : "firstName" in report.target
+                ? report.target.flag
+                  ? "Active"
+                  : "Inactive"
+                : "";
             return (
               <div className="flex flex-row gap-2 w-fit h-fit">
                 <p className="text-dark100_light900 paragraph-15-regular">

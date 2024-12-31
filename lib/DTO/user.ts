@@ -97,6 +97,7 @@ export interface ShortUserResponseDTO {
   lastName: string;
   nickName: string;
   avatar: string;
+  flag?: boolean;
 }
 
 export interface OnlineEvent {

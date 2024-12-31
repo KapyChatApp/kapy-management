@@ -27,7 +27,7 @@ export const fetchAllReports = async (): Promise<ReportResponseDTO[]> => {
   }
 };
 
-export const verifyReportAPI = async (
+export const verifyReport = async (
   param: VerifyReportDTO,
   reportId: string
 ): Promise<any> => {
@@ -123,6 +123,82 @@ export const hiddenComment = async (commentId: string) => {
     return response.data;
   } catch (error) {
     console.error("Error hiding comment:", error);
+    throw error;
+  }
+};
+
+export const getDetailReport = async (reportId: string) => {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      throw new Error("No token found");
+    }
+
+    const response = await axios.get(
+      `${BASE_URL}report/manage/detail?reportId=${reportId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.error("Failed to get detail report:", response.data.report);
+    }
+  } catch (error) {
+    console.error("Error get detail report:", error);
+    throw error;
+  }
+};
+
+export const displayPost = async (postId: string) => {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      throw new Error("No token found");
+    }
+
+    const response = await axios.get(
+      `${BASE_URL}post/manage/display?postId=${postId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error display post:", error);
+    throw error;
+  }
+};
+
+export const displayComment = async (commentId: string) => {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      throw new Error("No token found");
+    }
+
+    const response = await axios.get(
+      `${BASE_URL}post/comment/manage/display?commentId=${commentId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error display comment:", error);
     throw error;
   }
 };

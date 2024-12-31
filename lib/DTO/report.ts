@@ -1,9 +1,11 @@
+import { FileContent, ResponseMessageDTO } from "./message";
 import { ShortUserResponseDTO } from "./user";
 
 export interface VerifyReportDTO {
   status: string;
 }
 export interface IPost {
+  _id: string;
   userId: string;
   likedIds: string[];
   shares: string[];
@@ -12,8 +14,19 @@ export interface IPost {
   contentIds: string[];
   flag: boolean;
 }
+export interface IComment {
+  _id: string;
+  userId: string;
+  replyId: string;
+  caption: string;
+  contentId: string;
+  repliedIds: string[];
+  likedIds: string[];
+  flag: boolean;
+}
 
 export interface IUser {
+  _id: string;
   firstName: string;
   lastName: string;
   nickName: string;
@@ -41,7 +54,16 @@ export interface IUser {
   postIds: string[];
   rateIds: string[];
 }
-
+export interface IMessage {
+  _id: string;
+  flag: boolean;
+  readedId: string[];
+  contentId: FileContent[];
+  text: string[];
+  boxId: string;
+  createAt: string;
+  createBy: string;
+}
 export interface ReportResponseDTO {
   _id: string;
   content: string;
@@ -49,7 +71,7 @@ export interface ReportResponseDTO {
   status: string;
   userId: ShortUserResponseDTO;
   createAt: string;
-  target: IPost | IUser;
+  target: IPost | IUser | IComment | IMessage;
   targetType: string;
 }
 

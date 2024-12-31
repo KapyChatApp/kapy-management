@@ -305,41 +305,37 @@ export const selectionItemReport: SelectionItem[] = [
     label: "Resolved"
   },
   {
-    value: "rejected",
-    label: "Rejected"
+    value: "pending",
+    label: "Pending"
   },
   {
-    value: "image",
-    label: "Images"
+    value: "message",
+    label: "Message"
   },
   {
-    value: "link",
-    label: "Links"
+    value: "comment",
+    label: "Comment"
   },
   {
-    value: "file",
-    label: "Files"
+    value: "user",
+    label: "User"
   },
   {
-    value: "text",
-    label: "Texts"
+    value: "post",
+    label: "Post"
   }
 ];
 
-export type SortableReportKeys =
-  | "report.id"
-  | "report.reporterInfo.name"
-  | "report.createdAt"
-  | "report.title";
+export type SortableReportKeys = "_id" | "userId.name" | "createAt" | "content";
 
 export const titleTableHeadReport: {
   title: string;
   key: SortableReportKeys | null;
 }[] = [
-  { title: "ID", key: "report.id" },
-  { title: "Created At", key: "report.reporterInfo.name" },
-  { title: "Account Name", key: "report.createdAt" },
-  { title: "Title", key: "report.title" },
+  { title: "ID", key: "_id" },
+  { title: "Created At", key: "userId.name" },
+  { title: "Account Name", key: "createAt" },
+  { title: "Title", key: "content" },
   { title: "Targeted Item", key: null },
   { title: "Status", key: null },
   { title: "Action", key: null }

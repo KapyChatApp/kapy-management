@@ -1,3 +1,5 @@
+import { ShortUserResponseDTO } from "./user";
+
 // Interface FE
 export interface UserInfoBox {
   _id: string;
@@ -56,14 +58,14 @@ export interface GPSContent {
   description?: string;
 }
 export interface ResponseMessageDTO {
-  id: string;
+  _id: string;
   flag: boolean;
   readedId: string[];
-  contentId: FileContent;
-  text: string;
+  contentId: FileContent[];
+  text: string[];
   boxId: string;
   createAt: string;
-  createBy: string;
+  createBy: ShortUserResponseDTO;
   isReact: string[];
 }
 

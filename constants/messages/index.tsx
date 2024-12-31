@@ -157,12 +157,16 @@ export const selectionItemMessage: SelectionItem[] = [
     label: "Images"
   },
   {
-    value: "link",
-    label: "Links"
-  },
-  {
     value: "file",
     label: "Files"
+  },
+  {
+    value: "video",
+    label: "Videos"
+  },
+  {
+    value: "audio",
+    label: "Audios"
   },
   {
     value: "text",
@@ -170,18 +174,15 @@ export const selectionItemMessage: SelectionItem[] = [
   }
 ];
 
-export type SortableMessageKeys =
-  | "message.id"
-  | "message.userName"
-  | "message.createdAt";
+export type SortableMessageKeys = "id" | "userName" | "createdAt";
 
 export const titleTableHeadMessage: {
   title: string;
   key: SortableMessageKeys | null;
 }[] = [
-  { title: "ID", key: "message.id" },
-  { title: "Created At", key: "message.userName" },
-  { title: "Account Name", key: "message.createdAt" },
+  { title: "ID", key: "id" },
+  { title: "Created At", key: "createdAt" },
+  { title: "Account Name", key: "userName" },
   { title: "Content", key: null },
   { title: "Category", key: null },
   { title: "Action", key: null }

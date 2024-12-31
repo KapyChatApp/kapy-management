@@ -8,7 +8,12 @@ import Confirm, {
 } from "@/components/shared/sidebar/Confirm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { getUserProfile, updateInfo } from "@/lib/account.service";
+import {
+  deactiveUser,
+  getUserProfile,
+  reactiveUser,
+  updateInfo
+} from "@/lib/account.service";
 import { UpdateUserDTO, UserResponseDTO } from "@/lib/DTO/user";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
@@ -48,7 +53,6 @@ const page = () => {
   const { id } = useParams<{ id: string }>() as { id: string };
   // EditableParagraph
   const [detail, setDetail] = useState<UserResponseDTO>(defaultUserResponseDTO);
-  const [tempDetail, setTempDetail] = useState<UserResponseDTO>(detail);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -70,33 +74,17 @@ const page = () => {
 
   const handleSave = async () => {
     try {
-      // const params: UpdateUserDTO = {
-      //   firstName: tempDetail.firstName
-      //     ? tempDetail.firstName
-      //     : detail.firstName,
-      //   lastName: tempDetail.lastName ? tempDetail.lastName : detail.lastName,
-      //   nickName: tempDetail.nickName ? tempDetail.nickName : detail.nickName,
-      //   gender: tempDetail.gender ,
-      //   address: tempDetail.address ? tempDetail.address : detail.address,
-      //   job: tempDetail.job ? tempDetail.address : detail.job,
-      //   hobbies: tempDetail.hobbies ? tempDetail.hobbies : detail.hobbies,
-      //   bio: tempDetail.bio ? tempDetail.bio : detail.bio,
-      //   relationShip: tempDetail.relationShip
-      //     ? tempDetail.relationShip
-      //     : detail.relationShip,
-      //   birthDay: tempDetail.birthDay ? tempDetail.birthDay : detail.birthDay
-      // };
       const params: UpdateUserDTO = {
-        firstName: tempDetail.firstName,
-        lastName: tempDetail.lastName,
-        nickName: tempDetail.nickName,
-        gender: tempDetail.gender,
-        address: tempDetail.address,
-        job: tempDetail.job,
-        hobbies: tempDetail.hobbies,
-        bio: tempDetail.bio,
-        relationShip: tempDetail.relationShip,
-        birthDay: tempDetail.birthDay
+        firstName: detail.firstName,
+        lastName: detail.lastName,
+        nickName: detail.nickName,
+        gender: detail.gender,
+        address: detail.address,
+        job: detail.job,
+        hobbies: detail.hobbies,
+        bio: detail.bio,
+        relationShip: detail.relationShip,
+        birthDay: detail.birthDay
       };
       const result = await updateInfo(params, id);
       if (result) {
@@ -104,12 +92,11 @@ const page = () => {
           if (prev) {
             return {
               ...prev,
-              ...tempDetail
+              ...detail
             };
           }
           return prev;
         });
-        setTempDetail(detail);
         toast({
           title: "Success",
           description: "Account has been updated successfully!",
@@ -132,43 +119,85 @@ const page = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (detail) {
-      setTempDetail({
+      setDetail({
         ...detail,
         [e.target.name]: e.target.value
       });
     }
   };
-  const handleChangeStatus = (status: string) => {
+  const handleChangeStatus = async (status: string) => {
     if (detail) {
-      setTempDetail({
-        ...tempDetail,
+      setDetail({
+        ...detail,
         flag: status === "Active" ? true : false
       });
     }
   };
 
-  const handleDeactive = () => {
-    setDetail((prev) => {
-      if (prev) {
-        return {
-          ...prev,
-          flag: false
-        };
+  const handleDeactive = async () => {
+    try {
+      const result = await deactiveUser(id);
+      if (result) {
+        setDetail((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              flag: false
+            };
+          }
+          return prev;
+        });
+        toast({
+          title: "Success",
+          description: "Account has been deactive successfully!",
+          className:
+            "border-none rounded-lg bg-primary-200 text-primary-500 paragraph-regular items-center justify-center "
+        });
+      } else {
+        toast({
+          title: "Error deactive",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center"
+        });
       }
-      return prev;
-    });
+    } catch (err: any) {
+      console.error("Error fetching data:", err);
+      const errorMessage = err?.message || "An unexpected error occurred.";
+      alert(`Error fetching data: ${errorMessage}`);
+    }
   };
 
-  const handleReactive = () => {
-    setDetail((prev) => {
-      if (prev) {
-        return {
-          ...prev,
-          flag: true
-        };
+  const handleReactive = async () => {
+    try {
+      const result = await reactiveUser(id);
+      if (result) {
+        setDetail((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              flag: true
+            };
+          }
+          return prev;
+        });
+        toast({
+          title: "Success",
+          description: "Account has been reactive successfully!",
+          className:
+            "border-none rounded-lg bg-primary-200 text-primary-500 paragraph-regular items-center justify-center "
+        });
+      } else {
+        toast({
+          title: "Error reactive",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center"
+        });
       }
-      return prev;
-    });
+    } catch (err: any) {
+      console.error("Error reactive:", err);
+      const errorMessage = err?.message || "An unexpected error occurred.";
+      alert(`Error fetching data: ${errorMessage}`);
+    }
   };
 
   //Modal Confirm

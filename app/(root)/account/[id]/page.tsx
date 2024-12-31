@@ -8,7 +8,13 @@ import Confirm, {
 } from "@/components/shared/sidebar/Confirm";
 import { Button } from "@/components/ui/button";
 import { accountDataList } from "@/constants/accounts";
-import { fetchAllUsers, getUserProfile } from "@/lib/account.service";
+import { toast } from "@/hooks/use-toast";
+import {
+  deactiveUser,
+  fetchAllUsers,
+  getUserProfile,
+  reactiveUser
+} from "@/lib/account.service";
 import { UserResponseDTO } from "@/lib/DTO/user";
 import { AccountData } from "@/types/accounts";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -74,27 +80,70 @@ const page = () => {
   const handleEditButton = () => {
     router.push(`/account/edit/${detail._id}`);
   };
-  const handleDeactive = () => {
-    setDetail((prev) => {
-      if (prev) {
-        return {
-          ...prev,
-          flag: false
-        };
+  const handleDeactive = async () => {
+    try {
+      const result = await deactiveUser(id);
+      if (result) {
+        setDetail((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              flag: false
+            };
+          }
+          return prev;
+        });
+        toast({
+          title: "Success",
+          description: "Account has been deactive successfully!",
+          className:
+            "border-none rounded-lg bg-primary-200 text-primary-500 paragraph-regular items-center justify-center "
+        });
+      } else {
+        toast({
+          title: "Error deactive",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center"
+        });
       }
-      return prev;
-    });
+    } catch (err: any) {
+      console.error("Error deactive:", err);
+      const errorMessage = err?.message || "An unexpected error occurred.";
+      alert(`Error fetching data: ${errorMessage}`);
+    }
   };
-  const handleReactive = () => {
-    setDetail((prev) => {
-      if (prev) {
-        return {
-          ...prev,
-          flag: true
-        };
+
+  const handleReactive = async () => {
+    try {
+      const result = await reactiveUser(id);
+      if (result) {
+        setDetail((prev) => {
+          if (prev) {
+            return {
+              ...prev,
+              flag: true
+            };
+          }
+          return prev;
+        });
+        toast({
+          title: "Success",
+          description: "Account has been reactive successfully!",
+          className:
+            "border-none rounded-lg bg-primary-200 text-primary-500 paragraph-regular items-center justify-center "
+        });
+      } else {
+        toast({
+          title: "Error reactive",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center"
+        });
       }
-      return prev;
-    });
+    } catch (err: any) {
+      console.error("Error reactive:", err);
+      const errorMessage = err?.message || "An unexpected error occurred.";
+      alert(`Error fetching data: ${errorMessage}`);
+    }
   };
 
   //Modal Confirm

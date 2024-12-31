@@ -203,9 +203,37 @@ export async function deactiveUser(userId: string | null) {
       return [];
     }
     const response = await fetch(
-      `${BASE_URL}/user/manage/deactive?userId=${userId}`,
+      `${BASE_URL}user/manage/deactive?userId=${userId}`,
       {
         method: "DELETE",
+        headers: {
+          Authorization: `${storedToken}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Error update status");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Failed to update status", err);
+  }
+}
+
+export async function reactiveUser(userId: string | null) {
+  try {
+    const storedToken = localStorage.getItem("token");
+    if (!storedToken) {
+      console.log("No token found");
+      return [];
+    }
+    const response = await fetch(
+      `${BASE_URL}user/manage/reactive?userId=${userId}`,
+      {
+        method: "GET",
         headers: {
           Authorization: `${storedToken}`
         }

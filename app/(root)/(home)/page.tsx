@@ -43,7 +43,7 @@ const page = () => {
     if (!token) {
       router.push("/signin");
     }
-  }, []);
+  });
 
   useEffect(() => {
     const fetchDataAnalyst = async () => {

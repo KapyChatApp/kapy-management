@@ -1,7 +1,10 @@
 "use client";
 import InputCustom from "@/components/auth/InputCustom";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 import { loginUser } from "@/lib/auth.service";
+import { UserLoginDTO } from "@/lib/DTO/user";
+import { getDeviceInfo } from "@/lib/utils";
 import { InputCustomProps } from "@/types/auth";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
@@ -21,27 +24,29 @@ const Signin = () => {
     e.preventDefault();
 
     try {
-      const userData = { phoneNumber, password };
-      console.log(userData, "check");
-      const user = await loginUser(userData);
-      console.log(user);
-      if (user) {
-        const userRoles = user.roles;
-        if (userRoles.includes("admin")) {
-          localStorage.setItem("token", user.token);
-          const decodedToken = JSON.parse(atob(user.token.split(".")[1]));
-          const userId = decodedToken?.id;
-          localStorage.setItem("userId", userId);
-          window.location.href = "/";
-        } else {
-          setErrorMessage("You do not have access!");
-        }
-      } else {
-        setErrorMessage("Login failed!");
+      const params: UserLoginDTO = {
+        phoneNumber,
+        password,
+        ...getDeviceInfo()
+      };
+      console.log(params);
+      const result = await loginUser(params);
+      if (result.token === "") {
+        toast({
+          title: "Error",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center"
+        });
+        return;
       }
-    } catch (error: any) {
-      console.error("Error login:", error);
-      setErrorMessage(error.message || "Error.");
+      const token = result.token;
+      const device = result.device;
+      localStorage.setItem("token", token);
+      localStorage.setItem("deviceId", device._id);
+
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Login error:", error);
     }
   };
   return (

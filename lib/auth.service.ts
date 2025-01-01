@@ -1,3 +1,4 @@
+import { AuthResponsDTO } from "./DTO/auth";
 import { UserLoginDTO, UserRegisterDTO } from "./DTO/user";
 import axios from "axios";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
@@ -40,16 +41,32 @@ export async function checkTokenFrontend(
   }
 }
 
+const defaultDevice: AuthResponsDTO = {
+  _id: "",
+  logTime: new Date(),
+  deviceName: "",
+  deviceType: "",
+  brand: "",
+  modelName: "",
+  osName: "",
+  osVersion: "",
+  region: "",
+  isSafe: false,
+  isActive: false,
+  user: {
+    _id: "",
+    firstName: "",
+    lastName: "",
+    nickName: "",
+    avatar: ""
+  }
+};
+
 export const loginUser = async (
   params: UserLoginDTO
-): Promise<{
-  message: string;
-  token: string;
-  roles: string[];
-  flag: boolean;
-}> => {
+): Promise<{ message: string; token: string; device: AuthResponsDTO }> => {
   try {
-    const response = await fetch(`${BASE_URL}auth/manage/login`, {
+    const response = await fetch(`${BASE_URL}auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -59,21 +76,17 @@ export const loginUser = async (
 
     if (!response.ok) {
       const errorData = await response.json();
-      return { message: "Login failed", token: "", roles: [], flag: false };
+      return { message: "Login failed", token: "", device: defaultDevice };
     }
 
     const data = await response.json();
     const token = data.token;
+    console.log(data.device, "check");
     localStorage.setItem("token", token);
 
-    return {
-      message: data.message,
-      token: token,
-      roles: data.roles,
-      flag: false
-    };
+    return { message: data.message, token: token, device: data.device };
   } catch (error) {
     console.error("Error registering user:", error);
-    return { message: "Login failed", token: "", roles: [], flag: false };
+    return { message: "Login failed", token: "", device: defaultDevice };
   }
 };

@@ -11,24 +11,47 @@ import {
   MenubarTrigger
 } from "@/components/ui/menubar";
 import Image from "next/image";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 export const UserInfo = () => {
+  const router = useRouter();
   const handleLogout = async () => {
     try {
-      const response = await fetch(`${BASE_URL}auth/manage/logout`, {
+      const deviceId = localStorage.getItem("deviceId");
+      if (!deviceId) {
+        toast({
+          title: `Error in logout`,
+          description: "No device found",
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center "
+        });
+        return; // Trả về defaultValue nếu không có token
+      }
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        console.error("Token is missing");
+      }
+      const response = await fetch(`${BASE_URL}auth/logout?id=${deviceId}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          Authorization: `${storedToken}`
         }
       });
 
       if (response.ok) {
         localStorage.removeItem("token");
-        localStorage.removeItem("userId");
-        window.location.href = "/signin";
+        localStorage.removeItem("adminId");
+        localStorage.removeItem("deviceId");
+        router.push("/signin");
       } else {
         const errorData = await response.json();
-        console.error("Logout failed:", errorData.message);
+        toast({
+          title: `Error in logout`,
+          className:
+            "border-none rounded-lg bg-accent-red text-light-900 paragraph-regular items-center justify-center "
+        });
       }
     } catch (error) {
       console.error("Error during logout:", error);

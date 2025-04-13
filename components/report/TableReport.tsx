@@ -257,8 +257,8 @@ const TableReport: React.FC<TableUIReport> = ({
                       );
                     case "Post":
                       return (
-                        <div className="bg-status-link bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
-                          <p className="text-status-link paragraph-15-regular">
+                        <div className="bg-status-text bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-text paragraph-15-regular">
                             Post
                           </p>
                         </div>

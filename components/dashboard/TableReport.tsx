@@ -112,9 +112,11 @@ const TableReport = ({ reports, setReports }: props) => {
                 </p>
               </TableCell>
               <TableCell className="text-left">
-                <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
-                  {item.content}
-                </p>
+                <div className="flex items-center justify-start w-[200px] min-w-0">
+                  <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis w-full">
+                    {item.content}
+                  </p>
+                </div>
               </TableCell>
               <TableCell className="text-left ">
                 {(() => {
@@ -137,8 +139,8 @@ const TableReport = ({ reports, setReports }: props) => {
                       );
                     case "Post":
                       return (
-                        <div className="bg-status-link bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
-                          <p className="text-status-link paragraph-15-regular">
+                        <div className="bg-status-text bg-opacity-20 rounded-lg  w-[66px] items-center justify-center flex h-fit p-1">
+                          <p className="text-status-text paragraph-15-regular">
                             Post
                           </p>
                         </div>

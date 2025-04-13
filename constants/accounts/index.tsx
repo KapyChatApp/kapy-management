@@ -425,5 +425,5 @@ export const titleFriendList: {
   { title: "ID", key: "otherList.id" },
   { title: "Name", key: "otherList.userName" },
   { title: "Added At", key: "otherList.addedAt" },
-  { title: "Relationship", key: null }
+  { title: "Status", key: null }
 ];

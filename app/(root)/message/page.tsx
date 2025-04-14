@@ -34,7 +34,6 @@ const page = () => {
     };
     fetchData();
   }, []);
-  console.log(data);
   const { searchTerm, setSearchTerm, list } = useSearchMessage(data);
   const top = {
     titlePage: "Messages",

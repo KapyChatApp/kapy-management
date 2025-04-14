@@ -9,6 +9,7 @@ import useSearchMessage from "@/hooks/use-search-message";
 import { ResponseMessageDTO } from "@/lib/DTO/message";
 import { fetchAllMessages } from "@/lib/message.service";
 import { useMessageContext } from "@/context/DataContext";
+import { usePaginationTable } from "@/hooks/use-table";
 
 const page = () => {
   const [filterItem, setFilter] = useState("all");
@@ -44,12 +45,16 @@ const page = () => {
     setSearchTerm: setSearchTerm
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [totalPages, setTotalPages] = useState(0);
-  const [dataLength, setDataLength] = useState(0);
+  const {
+    currentPage,
+    setCurrentPage,
+    itemsPerPage,
+    indexOfLastItem,
+    indexOfFirstItem,
+    totalPages,
+    dataLength,
+    handlePaginationData
+  } = usePaginationTable(8);
 
   //Pagination
   const paginationUI: PaginationProps = {
@@ -63,15 +68,6 @@ const page = () => {
 
   //Table
   const [inputValue, setInputValue] = useState<string>("");
-  const handlePaginationData = (
-    itemsPerPage: number,
-    totalPages: number,
-    dataLength: number
-  ) => {
-    setItemsPerPage(itemsPerPage);
-    setTotalPages(totalPages);
-    setDataLength(dataLength);
-  };
   const table: TableProps = {
     indexOfLastItem,
     indexOfFirstItem,

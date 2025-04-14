@@ -4,6 +4,7 @@ import PaginationDisplay from "@/components/shared/PaginationDisplay";
 import TopPage from "@/components/shared/TopPage";
 import { selectionItemReport } from "@/constants/reports";
 import useSearchReport from "@/hooks/use-search-report";
+import { usePaginationTable } from "@/hooks/use-table";
 import { ReportResponseDTO } from "@/lib/DTO/report";
 import { fetchAllReports } from "@/lib/report.service";
 import { PaginationProps, TableProps } from "@/types";
@@ -42,12 +43,16 @@ const page = () => {
     setSearchTerm: setSearchTerm
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const [totalPages, setTotalPages] = useState(0);
-  const [dataLength, setDataLength] = useState(0);
+  const {
+    currentPage,
+    setCurrentPage,
+    itemsPerPage,
+    indexOfLastItem,
+    indexOfFirstItem,
+    totalPages,
+    dataLength,
+    handlePaginationData
+  } = usePaginationTable(8);
 
   //Pagination
   const paginationUI: PaginationProps = {
@@ -61,15 +66,6 @@ const page = () => {
 
   //Table
   const [inputValue, setInputValue] = useState<string>("");
-  const handlePaginationData = (
-    itemsPerPage: number,
-    totalPages: number,
-    dataLength: number
-  ) => {
-    setItemsPerPage(itemsPerPage);
-    setTotalPages(totalPages);
-    setDataLength(dataLength);
-  };
   const table: TableProps = {
     indexOfLastItem,
     indexOfFirstItem,

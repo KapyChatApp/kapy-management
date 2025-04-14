@@ -141,3 +141,8 @@ export const notifications: Notifications[] = [
     isRead: true
   }
 ];
+
+export const censors = [
+  { value: "message", label: "Message", icon: "uiw:message" },
+  { value: "post", label: "Post", icon: "solar:feed-linear" }
+];

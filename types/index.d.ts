@@ -25,7 +25,7 @@ export interface PaginationProps {
 export interface TableProps {
   indexOfLastItem: number;
   indexOfFirstItem: number;
-  filterItem: string;
+  filterItem?: string;
   itemsPerPage: number;
   inputValue: string;
 }

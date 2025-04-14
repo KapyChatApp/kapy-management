@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-
-import { useTheme } from "@/context/ThemeProvider";
 import {
   Menubar,
   MenubarContent,
@@ -12,7 +10,7 @@ import {
 } from "@/components/ui/menubar";
 import { censors, themes } from "@/constants/index";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import ConsoredMessageModal from "@/components/censor/ConsoredMessageModal";
+import ModalLayout from "@/components/censor/ModalLayout";
 
 export const Censor = () => {
   const [selectedValue, setSelectedValue] = useState("");
@@ -54,8 +52,8 @@ export const Censor = () => {
         </MenubarMenu>
       </Menubar>
 
-      {selectedValue === "message" && (
-        <ConsoredMessageModal
+      {selectedValue !== "" && (
+        <ModalLayout
           setSelectedValue={setSelectedValue}
           selectedValue={selectedValue}
         />

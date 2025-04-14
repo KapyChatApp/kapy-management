@@ -4,36 +4,39 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { PaginationProps, TableProps } from "@/types";
-import { CheckedMessages } from "@/lib/DTO/censor";
+import { CheckedMessagesReponse, CheckedPostReponse } from "@/lib/DTO/censor";
 import { usePaginationTable } from "@/hooks/use-table";
 import TableConsoredMessage from "./TableCensoredMessage";
 import PaginationDisplay from "../shared/PaginationDisplay";
-import { requestCensorMessage } from "@/lib/censor.service";
+import { requestCensor } from "@/lib/censor.service";
+import TableConsoredPost from "./TableCensoredPost";
 
-const ConsoredMessageModal = ({
+const ModalLayout = ({
   setSelectedValue,
   selectedValue
 }: {
   setSelectedValue: React.Dispatch<React.SetStateAction<string>>;
   selectedValue: string;
 }) => {
-  const [messages, setMessages] = useState<CheckedMessages[] | null>(null);
-  const [posts, setPosts] = useState<CheckedMessages[] | null>(null);
+  const [messages, setMessages] = useState<CheckedMessagesReponse[] | null>(
+    null
+  );
+  const [posts, setPosts] = useState<CheckedPostReponse[] | null>(null);
   useEffect(() => {
     const checkedData = async () => {
       try {
-        const result: CheckedMessages[] = await requestCensorMessage();
+        const result = await requestCensor(selectedValue);
         if (result) {
           result.sort(
-            (a, b) =>
+            (a: any, b: any) =>
               new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
           );
-          setMessages(result);
+          selectedValue === "message" ? setMessages(result) : setPosts(result);
         }
       } catch (err: any) {
-        console.error("Error consoring message:", err);
+        console.error("Error consoring:", err);
         const errorMessage = err?.message || "An unexpected error occurred.";
-        alert(`Error fetching data: ${errorMessage}`);
+        alert(`Error corsoring: ${errorMessage}`);
       }
     };
     checkedData();
@@ -70,6 +73,9 @@ const ConsoredMessageModal = ({
     setSelectedValue("");
   };
 
+  console.log("messages: ", messages);
+  console.log("post: ", posts);
+
   return (
     <div className="modal-overlay-post">
       {/* Close Button */}
@@ -88,32 +94,41 @@ const ConsoredMessageModal = ({
       </div>
 
       <div className="w-full max-w-[1054px] h-[683px] rounded-lg background-light900_dark200 flex items-center justify-center p-4">
-        {!messages ? (
-          <div className="loader"></div>
-        ) : (
+        {(selectedValue === "message" && messages) ||
+        (selectedValue === "post" && posts) ? (
           <div className="flex flex-col gap-4 w-full">
             <div className="flex flex-row items-start gap-2">
               <span className="text-dark100_light900 text-[20px] font-semibold">
                 Censored:
               </span>
               <span className="text-dark100_light900 text-[20px] font-regular">
-                {messages.length} messages
+                {selectedValue === "message" ? messages!.length : posts!.length}{" "}
+                {selectedValue}s
               </span>
             </div>
             <div className="flex flex-col background-light900_dark200 rounded-[12px] p-4 h-[520px] items-center justify-between">
-              <TableConsoredMessage
-                table={table}
-                onPaginationData={handlePaginationData}
-                list={messages}
-              />
-
+              {selectedValue === "message" ? (
+                <TableConsoredMessage
+                  table={table}
+                  onPaginationData={handlePaginationData}
+                  list={messages!}
+                />
+              ) : (
+                <TableConsoredPost
+                  table={table}
+                  onPaginationData={handlePaginationData}
+                  list={posts!}
+                />
+              )}
               <PaginationDisplay page={paginationUI} />
             </div>
           </div>
+        ) : (
+          <div className="loader"></div>
         )}
       </div>
     </div>
   );
 };
 
-export default ConsoredMessageModal;
+export default ModalLayout;

@@ -12,20 +12,23 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { TableProps, TableUI } from "@/types";
 import { SortableMessageKeys } from "@/constants/messages";
 import { formatTime } from "@/lib/utils";
-import { titleTableHeadConsoredMessage } from "@/constants/consor";
-import { CheckedMessagesReponse } from "@/lib/DTO/censor";
+import { CheckedPostReponse } from "@/lib/DTO/censor";
+import {
+  SortableCheckedPostKeys,
+  titleTableHeadConsoredPost
+} from "@/constants/consor";
 
-interface TableUIConsoredMessage {
+interface TableUIConsoredPost {
   table: TableProps;
   onPaginationData: (
     itemsPerPage: number,
     totalPages: number,
     dataLength: number
   ) => void;
-  list: CheckedMessagesReponse[];
+  list: CheckedPostReponse[];
 }
 
-const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
+const TableConsoredPost: React.FC<TableUIConsoredPost> = ({
   table,
   onPaginationData,
   list
@@ -34,21 +37,30 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
 
   //Sorted
   const [sortConfig, setSortConfig] = useState<{
-    key: SortableMessageKeys;
+    key: SortableCheckedPostKeys;
     direction: "ascending" | "descending";
   }>({
     key: "id",
     direction: "ascending"
   });
 
-  const getValueByKey = (item: (typeof list)[0], key: SortableMessageKeys) => {
+  const getValueByKey = (
+    item: (typeof list)[0],
+    key: SortableCheckedPostKeys
+  ) => {
     switch (key) {
       case "id":
         return item._id;
       case "userName":
-        return item.createBy.firstName + " " + item.createBy.lastName;
+        return item.firstName + " " + item.lastName;
       case "createdAt":
         return new Date(item.createAt).toLocaleString();
+      case "commentCount":
+        return item.comments;
+      case "likeCount":
+        return item.likedIds;
+      case "attachmentCount":
+        return item.contents.length;
       default:
         return "";
     }
@@ -78,7 +90,7 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
     }
     return 0;
   });
-  const requestSort = (key: SortableMessageKeys) => {
+  const requestSort = (key: SortableCheckedPostKeys) => {
     let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
@@ -100,10 +112,10 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
     <Table key="" className="h-[fit]">
       <TableHeader>
         <TableRow key="header-table-teacher" className="hover:bg-transparent">
-          {titleTableHeadConsoredMessage.map((item) => (
+          {titleTableHeadConsoredPost.map((item) => (
             <TableHead
               className={`w-fit text-left ${
-                item.title === "Status" || item.title === "Content"
+                item.title === "Caption" || item.title === "Status"
                   ? "cursor-default"
                   : "cursor-pointer"
               }`}
@@ -112,14 +124,14 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
                 className="flex flex-row items-center justify-start gap-1 w-fit h-fit"
                 onClick={
                   item.key
-                    ? () => requestSort(item.key as SortableMessageKeys)
+                    ? () => requestSort(item.key as SortableCheckedPostKeys)
                     : undefined
                 }
               >
                 <p className="text-primary-500 paragraph-regular">
                   {item.title}
                 </p>
-                {!(item.title === "Status" || item.title === "Content") && (
+                {!(item.title === "Caption" || item.title === "Status") && (
                   <Icon
                     icon="basil:sort-outline"
                     width={24}
@@ -153,19 +165,60 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
             <TableCell className="text-left">
               <div className="flex max-w-[170px]">
                 <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
-                  {item.createBy.firstName + " " + item.createBy.lastName}
+                  {item.firstName + " " + item.lastName}
+                </p>
+              </div>
+            </TableCell>
+            <TableCell className="text-left">
+              <div className="flex max-w-[250px]">
+                <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                  {item.caption ? item.caption : "No caption"}
                 </p>
               </div>
             </TableCell>
             <TableCell className="text-left">
               {(() => {
-                let content = "";
-                if (item.contentId.length) {
-                  const lastContent =
-                    item.contentId[item.contentId.length - 1].fileName;
-                  content = lastContent;
+                let content: any;
+                if (item.contents.length) {
+                  content = item.contents.length;
                 } else {
-                  content = item.text[item.text.length - 1];
+                  content = "No attachment";
+                }
+                return (
+                  <div className="flex max-w-[250px]">
+                    <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                      {content}
+                    </p>
+                  </div>
+                );
+              })()}
+            </TableCell>
+
+            <TableCell className="text-left">
+              {(() => {
+                let content: any;
+                if (item.likedIds > 0) {
+                  content = item.likedIds;
+                } else {
+                  content = "No likes";
+                }
+                return (
+                  <div className="flex max-w-[250px]">
+                    <p className="text-dark100_light900 paragraph-regular overflow-hidden whitespace-nowrap text-ellipsis">
+                      {content}
+                    </p>
+                  </div>
+                );
+              })()}
+            </TableCell>
+
+            <TableCell className="text-left">
+              {(() => {
+                let content: any;
+                if (item.comments > 0) {
+                  content = item.comments;
+                } else {
+                  content = "No comments";
                 }
                 return (
                   <div className="flex max-w-[250px]">
@@ -189,4 +242,4 @@ const TableConsoredMessage: React.FC<TableUIConsoredMessage> = ({
   );
 };
 
-export default TableConsoredMessage;
+export default TableConsoredPost;
